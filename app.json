@@ -3,24 +3,26 @@
     "name": "Rupee Rally",
     "slug": "rupee-rally",
     "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icons/rupeerally_dark.png",
     "scheme": "RupeeRally",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "experiments": { "typedRoutes": true },
     "splash": {
-      "image": "./src/assets/icon.png",
+      "image": "./src/assets/icons/rupeerally_dark.png",
       "resizeMode": "contain",
       "backgroundColor": "#10B981"
     },
     "ios": { "supportsTablet": true },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/icon.png",
+        "foregroundImage": "./src/assets/icons/rupeerally_dark.png",
         "backgroundColor": "#10B981"
       },
       "edgeToEdgeEnabled": true
     },
-    "web": { "favicon": "./src/assets/icon.png" },
+    "web": { "favicon": "./src/assets/icons/rupeerally_dark.png" },
     "plugins": ["expo-router", "expo-font"]
   }
 }
