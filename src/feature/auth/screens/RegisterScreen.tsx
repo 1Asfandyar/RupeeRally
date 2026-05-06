@@ -1,24 +1,32 @@
 import ThemedButton from '@/theme/components/ThemedButton'
 import ThemedDivider from '@/theme/components/ThemedDivider'
 import ThemedInput from '@/theme/components/ThemedInput'
+import ThemedPhoneInput from '@/theme/components/ThemedPhoneInput'
 import ThemedText from '@/theme/components/ThemedText'
-import { themeColors } from '@/theme/utilities'
-import { LoginViewProps } from '@/types/types'
+import { RegisterViewProps } from '@/types/types'
 import { Image, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const LoginScreen = (LoginParams: LoginViewProps) => {
+const RegisterScreen = (RegisterParams: RegisterViewProps) => {
   return (
-    <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!LoginParams.isKeyboardVisible ? 'justify-between' : ''}`}>
-      {!LoginParams.isKeyboardVisible && <Image
+    <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!RegisterParams.isKeyboardVisible ? 'justify-between' : ''}`}>
+      {!RegisterParams.isKeyboardVisible && <Image
         source={require('../../../assets/logo/myownmoney_logo.png')}
         style={{ width: '40%', height: '40%' }}
         resizeMode="contain"
       />}
       <View className='w-full'>
         <ThemedInput
+          leftIcon='person'
+          placeholder='Full Name'
+          containerClassName='w-full'
+        />
+        <ThemedInput
           leftIcon='mail'
           placeholder='Email Address'
+          containerClassName='w-full'
+        />
+        <ThemedPhoneInput
           containerClassName='w-full'
         />
         <ThemedInput
@@ -26,20 +34,19 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
           placeholder='Password'
           containerClassName='w-full'
         />
-        <ThemedButton
-          title='Forgot Password?'
-          variant='ghost'
-          textClassName={themeColors.primary}
-          containerClassName='self-end'
+        <ThemedInput
+          leftIcon='lock-closed-sharp'
+          placeholder='Confirm Password'
+          containerClassName='w-full'
         />
       </View>
       <ThemedButton
-        title='Login'
+        title='Register'
         containerClassName='w-full'
       />
       <ThemedDivider label='or continue with' />
       <ThemedButton
-        title='Login with Google'
+        title='Register with Google'
         variant='outline'
         leftIcon='logo-google'
         textClassName='text-gray-700'
@@ -47,13 +54,13 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
       />
       <View className="mt-4 flex-row justify-center items-center">
         <ThemedText className="text-l text-gray-500">
-          Dont have an account?{' '}
+          Already have an account?{' '}
         </ThemedText>
         <ThemedButton
-          title="Register"
+          title="Login"
           variant="ghost"
           weight="medium"
-          onPress={() => LoginParams.router.replace('/register')}
+          onPress={() => RegisterParams.router.replace('/login')}
           containerClassName="self-start py-1"
           textClassName="text-l text-primary"
         />
@@ -62,4 +69,4 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
   )
 }
 
-export default LoginScreen
+export default RegisterScreen

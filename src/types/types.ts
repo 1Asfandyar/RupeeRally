@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Router } from "expo-router";
 import { ComponentProps } from "react";
 import { TextInputProps, TextProps, TouchableOpacityProps } from "react-native";
 
@@ -32,4 +33,21 @@ export type ThemedTextInputProps = TextInputProps & {
   inputClassName?: string;
   borderClassName?: string;
   selectDate?: boolean;
+};
+
+export type LoginViewProps = {
+    router: Router;
+    isKeyboardVisible: boolean
+}
+
+export type RegisterViewProps = {
+  router: Router
+  isKeyboardVisible: boolean
+}
+
+export type CountryOption = {
+  code: string;
+  dialCode: string;
+  flag: string;
+  name: string;
 };
