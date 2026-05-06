@@ -1,5 +1,5 @@
 {
-  "name": "rupee-rally",
+  "name": "my-own-money",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -15,6 +15,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo-google-fonts/poppins": "^0.4.1",
     "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",

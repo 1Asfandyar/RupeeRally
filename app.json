@@ -1,28 +1,28 @@
 {
   "expo": {
-    "name": "Rupee Rally",
-    "slug": "rupee-rally",
+    "name": "My Own Money",
+    "slug": "my-own-money",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icons/rupeerally_dark.png",
-    "scheme": "RupeeRally",
+    "icon": "./src/assets/icons/myownmoney_dark.png",
+    "scheme": "MyOwnMoney",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "experiments": { "typedRoutes": true },
     "splash": {
-      "image": "./src/assets/icons/rupeerally_dark.png",
+      "image": "./src/assets/icons/myownmoney_dark.png",
       "resizeMode": "contain",
-      "backgroundColor": "#10B981"
+      "backgroundColor": "#1E5A52"
     },
     "ios": { "supportsTablet": true },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/icons/rupeerally_dark.png",
-        "backgroundColor": "#10B981"
+        "foregroundImage": "./src/assets/icons/myownmoney_dark.png",
+        "backgroundColor": "#1E5A52"
       },
       "edgeToEdgeEnabled": true
     },
-    "web": { "favicon": "./src/assets/icons/rupeerally_dark.png" },
+    "web": { "favicon": "./src/assets/icons/myownmoney_dark.png" },
     "plugins": ["expo-router", "expo-font"]
   }
 }

@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 
 export const ENV = {
   API_URL: Constants.expoConfig?.extra?.apiUrl || 'https://api.example.com',
-  APP_NAME: Constants.expoConfig?.extra?.appName || 'Rupee Rally',
+  APP_NAME: Constants.expoConfig?.extra?.appName || 'My Own Money',
 } as const;
 
 export const validateEnv = (): boolean => {
