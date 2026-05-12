@@ -3,11 +3,23 @@ import ThemedDivider from '@/theme/components/ThemedDivider'
 import ThemedInput from '@/theme/components/ThemedInput'
 import ThemedPhoneInput from '@/theme/components/ThemedPhoneInput'
 import ThemedText from '@/theme/components/ThemedText'
-import { RegisterViewProps } from '@/types/types'
+import { CountryOption, RegisterViewProps } from '@/types/types'
+import { ROUTES } from '@/config/routes'
+import { useRegisterForm } from '@/feature/auth/hooks/useRegisterForm'
 import { Image, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const RegisterScreen = (RegisterParams: RegisterViewProps) => {
+  const {
+    values,
+    fieldErrors,
+    formError,
+    isLoading,
+    submit,
+    updateField,
+    setCountryDialCode,
+  } = useRegisterForm(RegisterParams.router)
+
   return (
     <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!RegisterParams.isKeyboardVisible ? 'justify-between' : ''}`}>
       {!RegisterParams.isKeyboardVisible && <Image
@@ -20,29 +32,70 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
           leftIcon='person'
           placeholder='Full Name'
           containerClassName='w-full'
+          value={values.full_name}
+          onChangeText={(value) => updateField('full_name', value)}
+          autoCapitalize='words'
+          autoComplete='name'
+          textContentType='name'
+          returnKeyType='next'
+          error={fieldErrors.full_name}
         />
         <ThemedInput
           leftIcon='mail'
           placeholder='Email Address'
           containerClassName='w-full'
+          value={values.email}
+          onChangeText={(value) => updateField('email', value)}
+          autoCapitalize='none'
+          keyboardType='email-address'
+          autoComplete='email'
+          textContentType='emailAddress'
+          returnKeyType='next'
+          error={fieldErrors.email}
         />
         <ThemedPhoneInput
           containerClassName='w-full'
+          value={values.mobile_number}
+          onChangeText={(value) => updateField('mobile_number', value)}
+          onCountryChange={(country: CountryOption) => setCountryDialCode(country.dialCode)}
+          returnKeyType='next'
+          error={fieldErrors.mobile_number}
         />
         <ThemedInput
           leftIcon='lock-closed-sharp'
           placeholder='Password'
           containerClassName='w-full'
+          value={values.password}
+          onChangeText={(value) => updateField('password', value)}
+          secureTextEntry
+          autoComplete='new-password'
+          textContentType='newPassword'
+          returnKeyType='next'
+          error={fieldErrors.password}
         />
         <ThemedInput
           leftIcon='lock-closed-sharp'
           placeholder='Confirm Password'
           containerClassName='w-full'
+          value={values.password_confirmation}
+          onChangeText={(value) => updateField('password_confirmation', value)}
+          secureTextEntry
+          autoComplete='new-password'
+          textContentType='newPassword'
+          returnKeyType='done'
+          error={fieldErrors.password_confirmation}
         />
       </View>
+      {formError ? (
+        <ThemedText className='w-full text-center text-sm text-red-500'>
+          {formError}
+        </ThemedText>
+      ) : null}
       <ThemedButton
         title='Register'
         containerClassName='w-full'
+        onPress={submit}
+        loading={isLoading}
       />
       <ThemedDivider label='or continue with' />
       <ThemedButton
@@ -60,7 +113,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
           title="Login"
           variant="ghost"
           weight="medium"
-          onPress={() => RegisterParams.router.replace('/login')}
+          onPress={() => RegisterParams.router.replace(ROUTES.AUTH_LOGIN)}
           containerClassName="self-start py-1"
           textClassName="text-l text-primary"
         />

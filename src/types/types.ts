@@ -29,10 +29,15 @@ export type ThemedTextInputProps = TextInputProps & {
   leftIcon?: ComponentProps<typeof Ionicons>['name'];
   rightIcon?: ComponentProps<typeof Ionicons>['name'];
   onRightIconPress?: () => void;
+  error?: string;
   containerClassName?: string;
   inputClassName?: string;
   borderClassName?: string;
   selectDate?: boolean;
+};
+
+export type ThemedPhoneInputProps = ThemedTextInputProps & {
+  onCountryChange?: (country: CountryOption) => void;
 };
 
 export type LoginViewProps = {

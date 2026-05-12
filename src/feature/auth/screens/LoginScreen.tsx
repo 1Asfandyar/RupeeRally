@@ -4,10 +4,15 @@ import ThemedInput from '@/theme/components/ThemedInput'
 import ThemedText from '@/theme/components/ThemedText'
 import { themeColors } from '@/theme/utilities'
 import { LoginViewProps } from '@/types/types'
+import { ROUTES } from '@/config/routes'
+import { useLoginForm } from '@/feature/auth/hooks/useLoginForm'
 import { Image, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const LoginScreen = (LoginParams: LoginViewProps) => {
+  const { values, fieldErrors, formError, isLoading, submit, updateField } =
+    useLoginForm(LoginParams.router)
+
   return (
     <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!LoginParams.isKeyboardVisible ? 'justify-between' : ''}`}>
       {!LoginParams.isKeyboardVisible && <Image
@@ -20,11 +25,26 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
           leftIcon='mail'
           placeholder='Email Address'
           containerClassName='w-full'
+          value={values.email}
+          onChangeText={(value) => updateField('email', value)}
+          autoCapitalize='none'
+          keyboardType='email-address'
+          autoComplete='email'
+          textContentType='emailAddress'
+          returnKeyType='next'
+          error={fieldErrors.email}
         />
         <ThemedInput
           leftIcon='lock-closed-sharp'
           placeholder='Password'
           containerClassName='w-full'
+          value={values.password}
+          onChangeText={(value) => updateField('password', value)}
+          secureTextEntry
+          autoComplete='password'
+          textContentType='password'
+          returnKeyType='done'
+          error={fieldErrors.password}
         />
         <ThemedButton
           title='Forgot Password?'
@@ -33,9 +53,16 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
           containerClassName='self-end'
         />
       </View>
+      {formError ? (
+        <ThemedText className='w-full text-center text-sm text-red-500'>
+          {formError}
+        </ThemedText>
+      ) : null}
       <ThemedButton
         title='Login'
         containerClassName='w-full'
+        onPress={submit}
+        loading={isLoading}
       />
       <ThemedDivider label='or continue with' />
       <ThemedButton
@@ -53,7 +80,7 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
           title="Register"
           variant="ghost"
           weight="medium"
-          onPress={() => LoginParams.router.replace('/register')}
+          onPress={() => LoginParams.router.replace(ROUTES.AUTH_REGISTER)}
           containerClassName="self-start py-1"
           textClassName="text-l text-primary"
         />
