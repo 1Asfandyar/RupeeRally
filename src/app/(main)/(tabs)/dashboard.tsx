@@ -1,5 +1,3 @@
-import AccountsOverview from '@/feature/accounts/components/AccountsOverview';
+import AccountsOverviewScreen from '@/feature/accounts/screens/AccountsOverviewScreen';
 
-export default function Dashboard() {
-  return <AccountsOverview />;
-}
+export default AccountsOverviewScreen;

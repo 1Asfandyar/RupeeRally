@@ -1,4 +1,4 @@
-import { CountryOption } from "@/types/types";
+import { CountryOption } from '@/types/country.types';
 
 export const ERROR_MESSAGES = {
   NETWORK_ERROR: 'Network connection failed. Please try again.',

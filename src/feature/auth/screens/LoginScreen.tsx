@@ -2,13 +2,16 @@ import ThemedButton from '@/theme/components/ThemedButton'
 import ThemedDivider from '@/theme/components/ThemedDivider'
 import ThemedInput from '@/theme/components/ThemedInput'
 import ThemedText from '@/theme/components/ThemedText'
-import { LoginViewProps } from '@/types/types'
-import { ROUTES } from '@/config/routes'
-import { useLoginForm } from '@/feature/auth/hooks/useLoginForm'
+import useLoginScreen from '@/feature/auth/hooks/useLoginScreen'
 import { Image, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const LoginScreen = (LoginParams: LoginViewProps) => {
+const LoginScreen = () => {
+  const {
+    form,
+    isKeyboardVisible,
+    openRegister,
+  } = useLoginScreen()
   const {
     values,
     fieldErrors,
@@ -17,11 +20,11 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
     submit,
     updateField,
     validateField,
-  } = useLoginForm(LoginParams.router)
+  } = form
 
   return (
-    <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!LoginParams.isKeyboardVisible ? 'justify-between' : ''}`}>
-      {!LoginParams.isKeyboardVisible && <Image
+    <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!isKeyboardVisible ? 'justify-between' : ''}`}>
+      {!isKeyboardVisible && <Image
         source={require('../../../assets/logo/myownmoney_logo.png')}
         style={{ width: '100%', height: '40%' }}
         resizeMode="contain"
@@ -90,7 +93,7 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
           title="Register"
           variant="ghost"
           weight="medium"
-          onPress={() => LoginParams.router.replace(ROUTES.AUTH_REGISTER)}
+          onPress={openRegister}
           containerClassName="self-start py-1"
           textClassName="text-l text-primary"
         />

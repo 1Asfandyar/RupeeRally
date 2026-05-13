@@ -3,13 +3,17 @@ import ThemedDivider from '@/theme/components/ThemedDivider'
 import ThemedInput from '@/theme/components/ThemedInput'
 import ThemedPhoneInput from '@/theme/components/ThemedPhoneInput'
 import ThemedText from '@/theme/components/ThemedText'
-import { CountryOption, RegisterViewProps } from '@/types/types'
-import { ROUTES } from '@/config/routes'
-import { useRegisterForm } from '@/feature/auth/hooks/useRegisterForm'
+import { CountryOption } from '@/types/country.types'
+import useRegisterScreen from '@/feature/auth/hooks/useRegisterScreen'
 import { Image, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const RegisterScreen = (RegisterParams: RegisterViewProps) => {
+const RegisterScreen = () => {
+  const {
+    form,
+    isKeyboardVisible,
+    openLogin,
+  } = useRegisterScreen()
   const {
     values,
     fieldErrors,
@@ -19,11 +23,11 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
     updateField,
     validateField,
     setCountryDialCode,
-  } = useRegisterForm(RegisterParams.router)
+  } = form
 
   return (
-    <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!RegisterParams.isKeyboardVisible ? 'justify-between' : ''}`}>
-      {!RegisterParams.isKeyboardVisible && <Image
+    <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!isKeyboardVisible ? 'justify-between' : ''}`}>
+      {!isKeyboardVisible && <Image
         source={require('../../../assets/logo/myownmoney_logo.png')}
         style={{ width: '40%', height: '40%' }}
         resizeMode="contain"
@@ -120,7 +124,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
           title="Login"
           variant="ghost"
           weight="medium"
-          onPress={() => RegisterParams.router.replace(ROUTES.AUTH_LOGIN)}
+          onPress={openLogin}
           containerClassName="self-start py-1"
           textClassName="text-l text-primary"
         />
