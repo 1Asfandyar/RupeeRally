@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import { fontFamilies } from '../fonts';
-import { ThemedTextInputProps } from '../types';
+import { ThemedPhoneInputProps } from '../types';
 import { themeColors, typography } from '../utilities';
 import ThemedText from './ThemedText';
 import { COUNTRY_OPTIONS } from '@/config/constants';
@@ -21,11 +21,13 @@ const ThemedPhoneInput = ({
   weight = 'regular',
   style,
   label,
+  error,
+  onCountryChange,
   containerClassName = '',
   inputClassName = '',
   borderClassName = '',
   ...props
-}: ThemedTextInputProps) => {
+}: ThemedPhoneInputProps) => {
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<CountryOption>(
     COUNTRY_OPTIONS[0]
@@ -44,7 +46,9 @@ const ThemedPhoneInput = ({
         ) : null}
 
         <View
-          className={`flex-row items-center rounded-xl border border-gray-200 bg-white px-4 py-4 ${borderClassName}`}
+          className={`flex-row items-center rounded-xl border ${
+            error ? 'border-red-400' : 'border-gray-200'
+          } bg-white px-4 py-4 ${borderClassName}`}
         >
           <TouchableOpacity
             activeOpacity={0.8}
@@ -78,6 +82,10 @@ const ThemedPhoneInput = ({
             ]}
           />
         </View>
+
+        {error ? (
+          <ThemedText className="mt-1 text-xs text-red-500">{error}</ThemedText>
+        ) : null}
       </View>
 
       <Modal
@@ -111,6 +119,7 @@ const ThemedPhoneInput = ({
                     }`}
                     onPress={() => {
                       setSelectedCountry(country);
+                      onCountryChange?.(country);
                       setIsCountryModalVisible(false);
                     }}
                   >

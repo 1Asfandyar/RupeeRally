@@ -13,6 +13,7 @@ const ThemedInput = ({
   rightIcon,
   onRightIconPress,
   secureTextEntry,
+  error,
   containerClassName = '',
   inputClassName = '',
   borderClassName = '',
@@ -26,7 +27,9 @@ const ThemedInput = ({
       )}
 
       <View
-        className={`flex-row items-center border border-gray-200 rounded-xl px-4 py-4 bg-white overflow-hidden ${borderClassName}`}
+        className={`flex-row items-center border ${
+          error ? 'border-red-400' : 'border-gray-200'
+        } rounded-xl px-4 py-4 bg-white overflow-hidden ${borderClassName}`}
       >
         {leftIcon && (
           <Ionicons
@@ -59,6 +62,10 @@ const ThemedInput = ({
           </TouchableOpacity>
         )}
       </View>
+
+      {error ? (
+        <ThemedText className="mt-1 text-xs text-red-500">{error}</ThemedText>
+      ) : null}
     </View>
   );
 };

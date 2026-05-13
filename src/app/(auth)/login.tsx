@@ -1,37 +1,17 @@
-import LoginScreen from "@/feature/auth/screens/LoginScreen"
-import { useRouter } from "expo-router"
-import { useEffect, useState } from "react";
-import { Keyboard } from "react-native";
+import LoginScreen from '@/feature/auth/screens/LoginScreen';
+import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
+import { useRouter } from 'expo-router';
 
 const Login = () => {
-  const router = useRouter()
-    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
+  const router = useRouter();
+  const isKeyboardVisible = useKeyboardVisible();
 
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-  
   return (
     <LoginScreen
       router={router}
       isKeyboardVisible={isKeyboardVisible}
     />
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
