@@ -1,5 +1,11 @@
 import { apiRequest, extractBearerToken } from '@/services/api';
-import { AuthSuccess, AuthUser, LoginPayload, SignupPayload } from '@/types/auth.types';
+import {
+  AuthSuccess,
+  AuthUser,
+  LoginPayload,
+  SignupPayload,
+  UpdateMePayload,
+} from '@/types/auth.types';
 
 const isAuthUser = (user: unknown): user is AuthUser => {
   if (typeof user !== 'object' || user === null) return false;
@@ -60,6 +66,16 @@ export const signup = async (payload: SignupPayload) => {
 export const getMe = async (token: string) => {
   const result = await apiRequest<{ success: true; user: AuthUser }>('/api/v0/me', {
     token,
+  });
+
+  return getValidatedUser(result.data);
+};
+
+export const updateMe = async (token: string, payload: UpdateMePayload) => {
+  const result = await apiRequest<{ success: true; user: AuthUser }>('/api/v0/me', {
+    method: 'PATCH',
+    token,
+    body: payload,
   });
 
   return getValidatedUser(result.data);

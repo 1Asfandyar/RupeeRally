@@ -1,9 +1,14 @@
+import type { CreateAccountPayload } from '@/types/account.types';
+
 export type AuthUser = {
   id: number;
   full_name: string;
   mobile_number: string;
   email: string;
   role: string;
+  onboarding_completed?: boolean;
+  has_completed_onboarding?: boolean;
+  currency_id?: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -38,6 +43,16 @@ export type RegisterFormValues = {
   password_confirmation: string;
 };
 
+export type UpdateMePayload = {
+  onboarding_completed?: boolean;
+  currency_id?: number;
+};
+
+export type CompleteOnboardingPayload = {
+  currency_id: number;
+  account?: CreateAccountPayload;
+};
+
 export type AuthStatus =
   | 'idle'
   | 'restoring'
@@ -49,6 +64,7 @@ export type AuthStore = {
   token: string | null;
   user: AuthUser | null;
   isAuthenticated: boolean;
+  hasCompletedOnboarding: boolean;
   status: AuthStatus;
   isRestoring: boolean;
   restoreSession: () => Promise<void>;
@@ -56,4 +72,5 @@ export type AuthStore = {
   signup: (payload: SignupPayload) => Promise<void>;
   logout: () => Promise<void>;
   clearSession: () => Promise<void>;
+  completeOnboarding: (payload: CompleteOnboardingPayload) => Promise<void>;
 };

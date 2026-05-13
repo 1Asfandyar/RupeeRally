@@ -56,7 +56,7 @@ export const useRegisterForm = (router: Router) => {
           password: formValues.password,
           password_confirmation: formValues.password_confirmation,
         });
-        router.replace(ROUTES.MAIN_HOME);
+        router.replace(ROUTES.ONBOARDING);
       } catch (error) {
         if (error instanceof ApiError) {
           const hasFieldErrors = Object.keys(error.fieldErrors).some(
