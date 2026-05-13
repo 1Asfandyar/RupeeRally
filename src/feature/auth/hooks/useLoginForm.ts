@@ -1,4 +1,4 @@
-import { Router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { FormikErrors, useFormik } from 'formik';
 import { useCallback, useState } from 'react';
 
@@ -22,7 +22,8 @@ const getLoginFieldErrors = (
   password: fieldErrors.password,
 });
 
-export const useLoginForm = (router: Router) => {
+export const useLoginForm = () => {
+  const router = useRouter();
   const login = useAuthStore((state) => state.login);
   const isSigningIn = useAuthStore((state) => state.status === 'signingIn');
   const [formError, setFormError] = useState('');

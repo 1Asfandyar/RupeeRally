@@ -14,7 +14,7 @@ import { ThemedPhoneInputProps } from '../types';
 import { themeColors, typography } from '../utilities';
 import ThemedText from './ThemedText';
 import { COUNTRY_OPTIONS } from '@/config/constants';
-import { CountryOption } from '@/types/types';
+import { CountryOption } from '@/types/country.types';
 
 
 const ThemedPhoneInput = ({

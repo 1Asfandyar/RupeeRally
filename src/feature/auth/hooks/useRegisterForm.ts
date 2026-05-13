@@ -1,4 +1,4 @@
-import { Router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { FormikErrors, useFormik } from 'formik';
 import { useCallback, useState } from 'react';
 
@@ -31,7 +31,8 @@ const getRegisterFieldErrors = (
   password_confirmation: fieldErrors.password_confirmation,
 });
 
-export const useRegisterForm = (router: Router) => {
+export const useRegisterForm = () => {
+  const router = useRouter();
   const signup = useAuthStore((state) => state.signup);
   const isSigningUp = useAuthStore((state) => state.status === 'signingUp');
   const [countryDialCode, setCountryDialCode] = useState('+92');

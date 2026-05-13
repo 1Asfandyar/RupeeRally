@@ -1,7 +1,3 @@
-import { Redirect } from 'expo-router';
+import ProfileScreen from '@/feature/main/screens/ProfileScreen';
 
-import { ROUTES } from '@/config/routes';
-
-export default function ProfileTab() {
-  return <Redirect href={ROUTES.MAIN_HOME} />;
-}
+export default ProfileScreen;
