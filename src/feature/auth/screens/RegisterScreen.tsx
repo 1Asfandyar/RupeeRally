@@ -17,6 +17,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
     isLoading,
     submit,
     updateField,
+    validateField,
     setCountryDialCode,
   } = useRegisterForm(RegisterParams.router)
 
@@ -34,6 +35,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
           containerClassName='w-full'
           value={values.full_name}
           onChangeText={(value) => updateField('full_name', value)}
+          onBlur={() => validateField('full_name')}
           autoCapitalize='words'
           autoComplete='name'
           textContentType='name'
@@ -46,6 +48,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
           containerClassName='w-full'
           value={values.email}
           onChangeText={(value) => updateField('email', value)}
+          onBlur={() => validateField('email')}
           autoCapitalize='none'
           keyboardType='email-address'
           autoComplete='email'
@@ -57,6 +60,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
           containerClassName='w-full'
           value={values.mobile_number}
           onChangeText={(value) => updateField('mobile_number', value)}
+          onBlur={() => validateField('mobile_number')}
           onCountryChange={(country: CountryOption) => setCountryDialCode(country.dialCode)}
           returnKeyType='next'
           error={fieldErrors.mobile_number}
@@ -67,6 +71,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
           containerClassName='w-full'
           value={values.password}
           onChangeText={(value) => updateField('password', value)}
+          onBlur={() => validateField('password')}
           secureTextEntry
           autoComplete='new-password'
           textContentType='newPassword'
@@ -79,6 +84,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
           containerClassName='w-full'
           value={values.password_confirmation}
           onChangeText={(value) => updateField('password_confirmation', value)}
+          onBlur={() => validateField('password_confirmation')}
           secureTextEntry
           autoComplete='new-password'
           textContentType='newPassword'
@@ -104,6 +110,7 @@ const RegisterScreen = (RegisterParams: RegisterViewProps) => {
         leftIcon='logo-google'
         textClassName='text-gray-700'
         containerClassName='w-full'
+        disabled
       />
       <View className="mt-4 flex-row justify-center items-center">
         <ThemedText className="text-l text-gray-500">

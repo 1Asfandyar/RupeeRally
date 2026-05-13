@@ -1,9 +1,10 @@
 import { Router } from 'expo-router';
+import { FormikErrors, useFormik } from 'formik';
 import { useCallback, useState } from 'react';
 
 import { ERROR_MESSAGES } from '@/config/constants';
 import { ROUTES } from '@/config/routes';
-import { validateLoginForm } from '@/feature/auth/utils/authValidation';
+import { loginValidationSchema } from '@/feature/auth/utils/authValidation';
 import { ApiError } from '@/services/api';
 import { useAuthStore } from '@/store/auth.store';
 import { ApiFieldErrors } from '@/types/api.types';
@@ -14,55 +15,90 @@ const initialValues: LoginFormValues = {
   password: '',
 };
 
+const getLoginFieldErrors = (
+  fieldErrors: ApiFieldErrors,
+): FormikErrors<LoginFormValues> => ({
+  email: fieldErrors.email,
+  password: fieldErrors.password,
+});
+
 export const useLoginForm = (router: Router) => {
   const login = useAuthStore((state) => state.login);
-  const isLoading = useAuthStore((state) => state.status === 'signingIn');
-  const [values, setValues] = useState<LoginFormValues>(initialValues);
-  const [fieldErrors, setFieldErrors] = useState<ApiFieldErrors>({});
+  const isSigningIn = useAuthStore((state) => state.status === 'signingIn');
   const [formError, setFormError] = useState('');
 
-  const updateField = useCallback((field: keyof LoginFormValues, value: string) => {
-    setValues((current) => ({ ...current, [field]: value }));
-    setFieldErrors((current) => ({ ...current, [field]: '' }));
-    setFormError('');
-  }, []);
+  const formik = useFormik<LoginFormValues>({
+    initialValues,
+    validationSchema: loginValidationSchema,
+    validateOnChange: false,
+    validateOnBlur: true,
+    onSubmit: async (formValues, helpers) => {
+      setFormError('');
 
-  const submit = useCallback(async () => {
-    const nextErrors = validateLoginForm(values);
+      try {
+        await login({
+          email: formValues.email.trim(),
+          password: formValues.password,
+        });
+        router.replace(ROUTES.MAIN_HOME);
+      } catch (error) {
+        if (error instanceof ApiError) {
+          const hasFieldErrors = Object.keys(error.fieldErrors).some(
+            (field) => field !== 'base',
+          );
 
-    if (Object.keys(nextErrors).length) {
-      setFieldErrors(nextErrors);
-      return;
-    }
+          helpers.setErrors(getLoginFieldErrors(error.fieldErrors));
+          setFormError(
+            error.status === 401
+              ? ERROR_MESSAGES.INVALID_CREDENTIALS
+              : error.fieldErrors.base || (hasFieldErrors ? '' : error.message),
+          );
+          return;
+        }
 
-    try {
-      await login({ email: values.email.trim(), password: values.password });
-      router.replace(ROUTES.MAIN_DASHBOARD);
-    } catch (error) {
-      if (error instanceof ApiError) {
-        const hasFieldErrors = Object.keys(error.fieldErrors).some(
-          (field) => field !== 'base',
-        );
-
-        setFieldErrors(error.fieldErrors);
-        setFormError(
-          error.status === 401
-            ? ERROR_MESSAGES.INVALID_CREDENTIALS
-            : error.fieldErrors.base || (hasFieldErrors ? '' : error.message),
-        );
-        return;
+        setFormError(ERROR_MESSAGES.NETWORK_ERROR);
       }
+    },
+  });
+  const {
+    errors,
+    handleSubmit,
+    isSubmitting,
+    setFieldError,
+    setFieldTouched,
+    setFieldValue,
+    validateField: runFieldValidation,
+    values,
+  } = formik;
 
-      setFormError(ERROR_MESSAGES.NETWORK_ERROR);
-    }
-  }, [login, router, values]);
+  const updateField = useCallback(
+    (field: keyof LoginFormValues, value: string) => {
+      void setFieldValue(field, value, false);
+      setFieldError(field, undefined);
+      setFormError('');
+    },
+    [setFieldError, setFieldValue],
+  );
+
+  const validateField = useCallback(
+    (field: keyof LoginFormValues) => {
+      void setFieldTouched(field, true, false);
+      void runFieldValidation(field);
+    },
+    [runFieldValidation, setFieldTouched],
+  );
+
+  const submit = useCallback(() => {
+    handleSubmit();
+  }, [handleSubmit]);
 
   return {
     values,
-    fieldErrors,
+    fieldErrors: errors,
     formError,
-    isLoading,
+    isLoading: isSigningIn || isSubmitting,
     submit,
     updateField,
+    validateField,
   };
 };

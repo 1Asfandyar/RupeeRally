@@ -1,28 +1,52 @@
-import { ApiFieldErrors } from '@/types/api.types';
-import { LoginFormValues, RegisterFormValues } from '@/types/auth.types';
+import * as Yup from 'yup';
 
-export const validateLoginForm = (values: LoginFormValues): ApiFieldErrors => {
-  const errors: ApiFieldErrors = {};
+const PHONE_ALLOWED_PATTERN = /^[+\d\s()-]+$/;
+const PASSWORD_MIN_LENGTH = 8;
+const PHONE_MIN_DIGITS = 7;
+const PHONE_MAX_DIGITS = 15;
 
-  if (!values.email.trim()) errors.email = 'Email is required';
-  if (!values.password) errors.password = 'Password is required';
+const getPhoneDigits = (mobileNumber: string) => mobileNumber.replace(/\D/g, '');
 
-  return errors;
-};
+export const loginValidationSchema = Yup.object({
+  email: Yup.string()
+    .trim()
+    .email('Enter a valid email address')
+    .required('Email is required'),
+  password: Yup.string().required('Password is required'),
+});
 
-export const validateRegisterForm = (values: RegisterFormValues): ApiFieldErrors => {
-  const errors: ApiFieldErrors = {};
+export const registerValidationSchema = Yup.object({
+  full_name: Yup.string()
+    .trim()
+    .min(2, 'Full name must be at least 2 characters')
+    .required('Full name is required'),
+  email: Yup.string()
+    .trim()
+    .email('Enter a valid email address')
+    .required('Email is required'),
+  mobile_number: Yup.string()
+    .trim()
+    .required('Mobile number is required')
+    .matches(PHONE_ALLOWED_PATTERN, 'Enter a valid mobile number')
+    .test(
+      'mobile-number-length',
+      'Mobile number must be between 7 and 15 digits',
+      (value) => {
+        const digits = getPhoneDigits(value || '');
 
-  if (!values.full_name.trim()) errors.full_name = 'Full name is required';
-  if (!values.email.trim()) errors.email = 'Email is required';
-  if (!values.mobile_number.trim()) errors.mobile_number = 'Mobile number is required';
-  if (!values.password) errors.password = 'Password is required';
-  if (values.password !== values.password_confirmation) {
-    errors.password_confirmation = 'Passwords do not match';
-  }
-
-  return errors;
-};
+        return digits.length >= PHONE_MIN_DIGITS && digits.length <= PHONE_MAX_DIGITS;
+      },
+    ),
+  password: Yup.string()
+    .min(
+      PASSWORD_MIN_LENGTH,
+      `Password must be at least ${PASSWORD_MIN_LENGTH} characters`,
+    )
+    .required('Password is required'),
+  password_confirmation: Yup.string()
+    .required('Confirm your password')
+    .oneOf([Yup.ref('password')], 'Passwords do not match'),
+});
 
 export const normalizeMobileNumber = (mobileNumber: string, countryDialCode: string) => {
   const value = mobileNumber.replace(/[\s()-]/g, '');
@@ -30,4 +54,3 @@ export const normalizeMobileNumber = (mobileNumber: string, countryDialCode: str
 
   return `${countryDialCode}${value.replace(/^0+/, '')}`;
 };
-

@@ -52,7 +52,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         }
       }
 
-      await removeSession();
+      try {
+        await removeSession();
+      } catch (storageError) {
+        logger.warn('Failed to clear invalid stored session.', {
+          error: storageError instanceof Error ? storageError.message : String(storageError),
+        });
+      }
       set({ token: null, user: null, isAuthenticated: false });
     } finally {
       set({ isRestoring: false, status: 'idle' });
@@ -106,7 +112,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         });
       }
     } finally {
-      await removeSession();
+      try {
+        await removeSession();
+      } catch (storageError) {
+        logger.warn('Failed to clear local session.', {
+          error: storageError instanceof Error ? storageError.message : String(storageError),
+        });
+      }
       set({
         token: null,
         user: null,
@@ -117,7 +129,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   clearSession: async () => {
-    await removeSession();
+    try {
+      await removeSession();
+    } catch (storageError) {
+      logger.warn('Failed to clear local session.', {
+        error: storageError instanceof Error ? storageError.message : String(storageError),
+      });
+    }
     set({ token: null, user: null, isAuthenticated: false });
   },
 }));

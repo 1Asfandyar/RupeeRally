@@ -7,7 +7,7 @@ export default function AuthLayout() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   if (isAuthenticated) {
-    return <Redirect href={ROUTES.MAIN_DASHBOARD} />;
+    return <Redirect href={ROUTES.MAIN_HOME} />;
   }
 
   return <Slot />;

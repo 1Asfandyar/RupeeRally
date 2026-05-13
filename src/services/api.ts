@@ -13,6 +13,7 @@ export class ApiError extends Error {
 }
 
 const API_URL = ENV.API_URL.replace(/\/$/, '');
+const REQUEST_TIMEOUT_MS = 15000;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -53,6 +54,8 @@ export const apiRequest = async <T>(
   endpoint: string,
   options: ApiRequestOptions = {},
 ): Promise<ApiResponse<T>> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   const headers: Record<string, string> = {
     Accept: 'application/json',
   };
@@ -65,11 +68,24 @@ export const apiRequest = async <T>(
     headers.Authorization = options.token;
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    method: options.method ?? 'GET',
-    headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}${endpoint}`, {
+      method: options.method ?? 'GET',
+      headers,
+      body: options.body ? JSON.stringify(options.body) : undefined,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new ApiError(408, 'Request timed out. Please try again.');
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   const text = await response.text();
   let data: unknown = null;

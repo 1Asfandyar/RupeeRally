@@ -8,6 +8,8 @@ import { appFonts } from '@/theme/fonts';
 import { useAuthStore } from '@/store/auth.store';
 import { themeColors } from '@/theme/utilities';
 
+export { ErrorBoundary } from 'expo-router';
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts(appFonts);
   const restoreSession = useAuthStore((state) => state.restoreSession);

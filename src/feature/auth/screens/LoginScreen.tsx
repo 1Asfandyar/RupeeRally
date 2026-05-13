@@ -2,7 +2,6 @@ import ThemedButton from '@/theme/components/ThemedButton'
 import ThemedDivider from '@/theme/components/ThemedDivider'
 import ThemedInput from '@/theme/components/ThemedInput'
 import ThemedText from '@/theme/components/ThemedText'
-import { themeColors } from '@/theme/utilities'
 import { LoginViewProps } from '@/types/types'
 import { ROUTES } from '@/config/routes'
 import { useLoginForm } from '@/feature/auth/hooks/useLoginForm'
@@ -10,8 +9,15 @@ import { Image, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const LoginScreen = (LoginParams: LoginViewProps) => {
-  const { values, fieldErrors, formError, isLoading, submit, updateField } =
-    useLoginForm(LoginParams.router)
+  const {
+    values,
+    fieldErrors,
+    formError,
+    isLoading,
+    submit,
+    updateField,
+    validateField,
+  } = useLoginForm(LoginParams.router)
 
   return (
     <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!LoginParams.isKeyboardVisible ? 'justify-between' : ''}`}>
@@ -27,6 +33,7 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
           containerClassName='w-full'
           value={values.email}
           onChangeText={(value) => updateField('email', value)}
+          onBlur={() => validateField('email')}
           autoCapitalize='none'
           keyboardType='email-address'
           autoComplete='email'
@@ -40,6 +47,7 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
           containerClassName='w-full'
           value={values.password}
           onChangeText={(value) => updateField('password', value)}
+          onBlur={() => validateField('password')}
           secureTextEntry
           autoComplete='password'
           textContentType='password'
@@ -49,8 +57,9 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
         <ThemedButton
           title='Forgot Password?'
           variant='ghost'
-          textClassName={themeColors.primary}
+          textClassName='text-primary'
           containerClassName='self-end'
+          disabled
         />
       </View>
       {formError ? (
@@ -71,6 +80,7 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
         leftIcon='logo-google'
         textClassName='text-gray-700'
         containerClassName='w-full'
+        disabled
       />
       <View className="mt-4 flex-row justify-center items-center">
         <ThemedText className="text-l text-gray-500">
