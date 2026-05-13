@@ -40,7 +40,7 @@ export const useLoginForm = (router: Router) => {
           email: formValues.email.trim(),
           password: formValues.password,
         });
-        router.replace(ROUTES.MAIN_HOME);
+        router.replace(ROUTES.ONBOARDING);
       } catch (error) {
         if (error instanceof ApiError) {
           const hasFieldErrors = Object.keys(error.fieldErrors).some(

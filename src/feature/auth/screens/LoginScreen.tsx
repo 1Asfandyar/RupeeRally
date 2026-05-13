@@ -23,7 +23,7 @@ const LoginScreen = (LoginParams: LoginViewProps) => {
     <SafeAreaView className={`flex-1 items-center pb-28 px-6 bg-white ${!LoginParams.isKeyboardVisible ? 'justify-between' : ''}`}>
       {!LoginParams.isKeyboardVisible && <Image
         source={require('../../../assets/logo/myownmoney_logo.png')}
-        style={{ width: '40%', height: '40%' }}
+        style={{ width: '100%', height: '40%' }}
         resizeMode="contain"
       />}
       <View className='w-full'>
