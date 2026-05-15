@@ -1,7 +1,9 @@
 import type { Ionicons } from '@expo/vector-icons';
 
 import type { Category } from '@/feature/categories/types/category.types';
+import type { TransactionDateFilters } from '@/feature/transactions/types/transactionDateFilter.types';
 import type { Account } from '@/types/account.types';
+import type { Currency } from '@/types/currency.types';
 
 export type TransactionType = 'expense' | 'income';
 
@@ -22,6 +24,10 @@ export type Transaction = Omit<TransactionPayload, 'note'> & {
   user_id?: number;
   created_at?: string;
   updated_at?: string;
+};
+
+export type ListAccountTransactionsParams = TransactionDateFilters & {
+  search?: string;
 };
 
 export type TransactionsStoreState = {
@@ -69,11 +75,27 @@ export type TransactionsSummaryMetric = {
 export type TransactionsViewModel = {
   accountBalanceLabel: string;
   accountCurrencyCode: string;
+  activeAccounts: Account[];
+  currencies: Currency[];
+  dateFilters: TransactionDateFilters;
   error: string | null;
+  hasActiveDateFilter: boolean;
+  hasActiveFilters: boolean;
+  hasActiveSearch: boolean;
   hasAccount: boolean;
+  hasLoadedTransactions: boolean;
   hasTransactions: boolean;
   isLoading: boolean;
+  isAccountPickerVisible: boolean;
+  onApplyDateFilters: (filters: TransactionDateFilters) => void;
+  onChangeAccountPress: () => void;
+  onCloseAccountPicker: () => void;
+  onClearSearch: () => void;
+  onClearDateFilters: () => void;
   onRefresh: () => void;
+  onSearchQueryChange: (query: string) => void;
+  onSelectAccount: (accountId: number) => void;
+  searchQuery: string;
   selectedAccount?: Account;
   summaryMetrics: TransactionsSummaryMetric[];
   transactions: TransactionListItem[];
@@ -86,6 +108,7 @@ export type TransactionsViewProps = {
 export type TransactionsAccountCardProps = {
   accountBalanceLabel: string;
   accountCurrencyCode: string;
+  onChangeAccountPress: () => void;
   selectedAccount?: Account;
 };
 

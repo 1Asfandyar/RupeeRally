@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ROUTES } from '@/config/routes';
 import { listAccounts } from '@/feature/accounts/api/accounts.api';
@@ -14,6 +14,7 @@ import {
   CATEGORY_SUMMARY_ICONS,
   CATEGORY_TYPE_LABELS,
 } from '@/feature/categories/constants/categoryDashboard.constants';
+import { EMPTY_TRANSACTION_DATE_FILTERS } from '@/feature/transactions/constants/transactionDateFilter.constants';
 import { listAccountTransactions } from '@/feature/transactions/api/transactions.api';
 import { useTransactionsStore } from '@/feature/transactions/store/transactions.store';
 import type {
@@ -22,6 +23,7 @@ import type {
   TransactionsSummaryMetric,
   TransactionsViewModel,
 } from '@/feature/transactions/types/transaction.types';
+import type { TransactionDateFilters } from '@/feature/transactions/types/transactionDateFilter.types';
 import { ApiError } from '@/services/api';
 import { useAuthStore } from '@/store/auth.store';
 import type { Currency } from '@/types/currency.types';
@@ -162,6 +164,15 @@ const getSummaryMetrics = (
 
 export const useTransactions = (): TransactionsViewModel => {
   const router = useRouter();
+  const transactionRequestIdRef = useRef(0);
+  const [dateFilters, setDateFilters] = useState<TransactionDateFilters>(
+    EMPTY_TRANSACTION_DATE_FILTERS,
+  );
+  const [isTransactionAccountPickerVisible, setIsTransactionAccountPickerVisible] =
+    useState(false);
+  const [hasLoadedTransactions, setHasLoadedTransactions] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
   const clearSession = useAuthStore((state) => state.clearSession);
@@ -233,6 +244,46 @@ export const useTransactions = (): TransactionsViewModel => {
     () => getSummaryMetrics(sortedTransactions, displayCurrency, currencies),
     [currencies, displayCurrency, sortedTransactions],
   );
+  const hasActiveSearch = searchQuery.trim().length > 0;
+  const hasActiveDateFilter = Boolean(dateFilters.fromDate || dateFilters.toDate);
+  const hasActiveFilters = hasActiveSearch || hasActiveDateFilter;
+
+  const updateSearchQuery = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
+
+  const applyDateFilters = useCallback((filters: TransactionDateFilters) => {
+    setDateFilters({
+      fromDate: filters.fromDate,
+      toDate: filters.toDate,
+    });
+  }, []);
+
+  const clearDateFilters = useCallback(() => {
+    setDateFilters({ ...EMPTY_TRANSACTION_DATE_FILTERS });
+  }, []);
+
+  const clearSearchQuery = useCallback(() => {
+    setSearchQuery('');
+  }, []);
+
+  const openAccountPicker = useCallback(() => {
+    if (activeAccounts.length > 0) {
+      setIsTransactionAccountPickerVisible(true);
+    }
+  }, [activeAccounts.length]);
+
+  const closeAccountPicker = useCallback(() => {
+    setIsTransactionAccountPickerVisible(false);
+  }, []);
+
+  const selectAccount = useCallback(
+    (accountId: number) => {
+      setSelectedAccountId(accountId);
+      setIsTransactionAccountPickerVisible(false);
+    },
+    [setSelectedAccountId],
+  );
 
   const redirectToLogin = useCallback(async () => {
     await clearSession();
@@ -289,22 +340,39 @@ export const useTransactions = (): TransactionsViewModel => {
 
   const refreshTransactions = useCallback(async () => {
     if (!token || !selectedAccount?.id) {
+      transactionRequestIdRef.current += 1;
       setTransactions([]);
+      setHasLoadedTransactions(false);
       return;
     }
 
+    const requestId = transactionRequestIdRef.current + 1;
+    transactionRequestIdRef.current = requestId;
     setIsLoading(true);
     setError(null);
 
     try {
       const [nextTransactions, nextCategories] = await Promise.all([
-        listAccountTransactions(token, selectedAccount.id),
+        listAccountTransactions(token, selectedAccount.id, {
+          fromDate: dateFilters.fromDate,
+          search: debouncedSearchQuery,
+          toDate: dateFilters.toDate,
+        }),
         listCategories(token),
       ]);
 
+      if (transactionRequestIdRef.current !== requestId) {
+        return;
+      }
+
       setTransactions(nextTransactions);
       setCategories(nextCategories);
+      setHasLoadedTransactions(true);
     } catch (requestError) {
+      if (transactionRequestIdRef.current !== requestId) {
+        return;
+      }
+
       if (requestError instanceof ApiError && requestError.status === 401) {
         await redirectToLogin();
         return;
@@ -316,9 +384,14 @@ export const useTransactions = (): TransactionsViewModel => {
           : 'Could not load transactions.',
       );
     } finally {
-      setIsLoading(false);
+      if (transactionRequestIdRef.current === requestId) {
+        setIsLoading(false);
+      }
     }
   }, [
+    dateFilters.fromDate,
+    dateFilters.toDate,
+    debouncedSearchQuery,
     redirectToLogin,
     selectedAccount?.id,
     setCategories,
@@ -331,6 +404,18 @@ export const useTransactions = (): TransactionsViewModel => {
   useEffect(() => {
     void loadAccountContext();
   }, [loadAccountContext]);
+
+  useEffect(() => {
+    setHasLoadedTransactions(false);
+  }, [selectedAccount?.id]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery.trim());
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (activeAccounts.length === 0) {
@@ -359,11 +444,27 @@ export const useTransactions = (): TransactionsViewModel => {
   return {
     accountBalanceLabel,
     accountCurrencyCode: displayCurrency.code,
+    activeAccounts,
+    currencies,
+    dateFilters,
     error,
+    hasActiveDateFilter,
+    hasActiveFilters,
+    hasActiveSearch,
     hasAccount: Boolean(selectedAccount),
+    hasLoadedTransactions,
     hasTransactions: transactionItems.length > 0,
+    isAccountPickerVisible: isTransactionAccountPickerVisible,
     isLoading: isAccountContextLoading || isLoading,
+    onApplyDateFilters: applyDateFilters,
+    onChangeAccountPress: openAccountPicker,
+    onCloseAccountPicker: closeAccountPicker,
+    onClearDateFilters: clearDateFilters,
+    onClearSearch: clearSearchQuery,
     onRefresh: refresh,
+    onSearchQueryChange: updateSearchQuery,
+    onSelectAccount: selectAccount,
+    searchQuery,
     selectedAccount,
     summaryMetrics,
     transactions: transactionItems,

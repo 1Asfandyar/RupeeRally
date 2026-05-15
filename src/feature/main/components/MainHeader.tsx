@@ -35,14 +35,6 @@ const MainHeader = () => {
         <View className="flex-row items-center">
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Search"
-            className="mr-2 h-11 w-11 items-center justify-center rounded-xl bg-gray-100"
-          >
-            <Ionicons name="search" size={21} color={themeColors.gray700} />
-          </Pressable>
-
-          <Pressable
-            accessibilityRole="button"
             accessibilityLabel="Notifications"
             className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-gray-100"
           >
