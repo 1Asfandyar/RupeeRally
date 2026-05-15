@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity, View } from 'react-native';
 
-import { SelectedAccountBalanceCardProps } from '@/feature/accounts/types/accountsOverview.types';
+import type { SelectedAccountBalanceCardProps } from '@/feature/accounts/types/accountsOverview.types';
 import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';
 import { formatCents } from '@/utils/currency';

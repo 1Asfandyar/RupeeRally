@@ -1,3 +1,3 @@
-import AddPersonalRecordScreen from '@/feature/accounts/screens/AddPersonalRecordScreen';
+import AddPersonalRecordScreen from '@/feature/transactions/screens/AddPersonalRecordScreen';
 
 export default AddPersonalRecordScreen;
