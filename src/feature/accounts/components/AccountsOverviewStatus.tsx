@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, View } from 'react-native';
 
-import { AccountsOverviewStatusProps } from '@/feature/accounts/types/accountsOverview.types';
+import type { AccountsOverviewStatusProps } from '@/feature/accounts/types/accountsOverview.types';
 import ThemedButton from '@/theme/components/ThemedButton';
 import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';

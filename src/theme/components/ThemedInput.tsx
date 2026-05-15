@@ -9,6 +9,9 @@ const ThemedInput = ({
   weight = 'regular',
   style,
   label,
+  inlineLabel,
+  inlineLabelIcon,
+  isProminent = false,
   leftIcon,
   rightIcon,
   onRightIconPress,
@@ -27,10 +30,36 @@ const ThemedInput = ({
       )}
 
       <View
-        className={`flex-row items-center border ${
-          error ? 'border-red-400' : 'border-gray-200'
-        } rounded-xl px-4 py-4 bg-white overflow-hidden ${borderClassName}`}
+        className={`flex-row items-center border rounded-xl px-4 ${
+          error
+            ? 'border-red-400'
+            : isProminent
+              ? 'border-primary/30'
+              : 'border-gray-200'
+        } ${
+          isProminent ? 'py-5 bg-primary/5' : 'py-4 bg-white'
+        } overflow-hidden ${borderClassName}`}
       >
+        {inlineLabel ? (
+          <>
+            <ThemedText
+              className={`mr-1 ${isProminent ? 'text-base text-gray-900' : 'text-sm text-gray-600'}`}
+              weight="semiBold"
+            >
+              {inlineLabel}
+            </ThemedText>
+            {inlineLabelIcon ? (
+              <Ionicons
+                name={inlineLabelIcon}
+                size={18}
+                style={{ marginRight: 10 }}
+                color={themeColors.primary}
+              />
+            ) : null}
+            <View className="mr-3 h-6 w-px bg-gray-300" />
+          </>
+        ) : null}
+
         {leftIcon && (
           <Ionicons
             name={leftIcon}

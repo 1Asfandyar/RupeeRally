@@ -1,14 +1,30 @@
-import {
+import type {
   AddTransactionRecordContent,
   AddTransactionRecordFormValues,
   AddTransactionRecordKind,
-} from '@/feature/accounts/types/addTransactionRecord.types';
+  TransactionTypeTabConfig,
+} from '@/feature/transactions/types/addTransactionRecord.types';
 
 export const addTransactionRecordInitialValues: AddTransactionRecordFormValues = {
+  accountId: '',
   amount: '',
+  categoryId: '',
   note: '',
-  recordTitle: '',
+  transactionType: 'expense',
 };
+
+export const transactionTypeTabs: TransactionTypeTabConfig[] = [
+  {
+    value: 'expense',
+    label: 'Expense',
+    iconName: 'trending-down-outline',
+  },
+  {
+    value: 'income',
+    label: 'Income',
+    iconName: 'trending-up-outline',
+  },
+];
 
 export const addTransactionRecordContent: Record<
   AddTransactionRecordKind,

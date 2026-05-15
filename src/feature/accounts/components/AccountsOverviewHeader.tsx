@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity, View } from 'react-native';
 
-import { AccountsOverviewHeaderProps } from '@/feature/accounts/types/accountsOverview.types';
+import type { AccountsOverviewHeaderProps } from '@/feature/accounts/types/accountsOverview.types';
 import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';
 

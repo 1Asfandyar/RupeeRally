@@ -1,4 +1,4 @@
-import AddTransactionRecordScreen from '@/feature/accounts/screens/AddTransactionRecordScreen';
+import AddTransactionRecordScreen from '@/feature/transactions/screens/AddTransactionRecordScreen';
 
 const AddSharedRecordScreen = () => (
   <AddTransactionRecordScreen recordKind="shared" />

@@ -1,5 +1,10 @@
-import AccountsOverview from '@/feature/accounts/components/AccountsOverview';
+import { useAccountsOverview } from '@/feature/accounts/hooks/useAccountsOverview';
+import AccountsOverviewView from '@/feature/accounts/views/AccountsOverviewView';
 
-const AccountsOverviewScreen = () => <AccountsOverview />;
+const AccountsOverviewScreen = () => {
+  const dashboard = useAccountsOverview();
+
+  return <AccountsOverviewView dashboard={dashboard} />;
+};
 
 export default AccountsOverviewScreen;

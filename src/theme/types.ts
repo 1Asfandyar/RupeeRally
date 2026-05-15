@@ -26,6 +26,9 @@ export type ThemedTextProps = TextProps & {
 export type ThemedTextInputProps = TextInputProps & {
   weight?: FontWeight;
   label?: string;
+  inlineLabel?: string;
+  inlineLabelIcon?: ComponentProps<typeof Ionicons>['name'];
+  isProminent?: boolean;
   leftIcon?: ComponentProps<typeof Ionicons>['name'];
   rightIcon?: ComponentProps<typeof Ionicons>['name'];
   onRightIconPress?: () => void;

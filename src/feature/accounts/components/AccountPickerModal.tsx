@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, TouchableOpacity, View } from 'react-native';
 
-import { AccountPickerModalProps } from '@/feature/accounts/types/accountsOverview.types';
+import type { AccountPickerModalProps } from '@/feature/accounts/types/accountsOverview.types';
 import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';
 import { formatCents } from '@/utils/currency';

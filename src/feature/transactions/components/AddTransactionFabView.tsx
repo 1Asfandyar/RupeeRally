@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity, View } from 'react-native';
 
-import { AddTransactionFabViewProps } from '@/feature/accounts/types/addTransactionFab.types';
+import type { AddTransactionFabViewProps } from '@/feature/transactions/types/addTransactionFab.types';
 import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';
 

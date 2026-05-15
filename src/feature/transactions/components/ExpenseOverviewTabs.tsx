@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import {
   ExpenseOverviewTabConfig,
   ExpenseOverviewTabsProps,
-} from '@/feature/accounts/types/accountsOverview.types';
+} from '@/feature/transactions/types/expenseOverview.types';
 import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';
 
@@ -24,6 +24,7 @@ const expenseOverviewTabs: ExpenseOverviewTabConfig[] = [
 ];
 
 const ExpenseOverviewTabs = ({
+  children,
   onSelectTab,
   selectedTab,
 }: ExpenseOverviewTabsProps) => {
@@ -66,10 +67,12 @@ const ExpenseOverviewTabs = ({
         })}
       </View>
 
-      <View className="mt- min-h-44 rounded-b-3xl border border-gray-100 bg-gray-100 px-4 py-5">
-        <ThemedText className="text-base text-gray-900" weight="semiBold">
-          {selectedTabConfig?.title}
-        </ThemedText>
+      <View className="min-h-44 rounded-b-3xl border border-gray-100 bg-gray-100 px-4 py-5">
+        {children ?? (
+          <ThemedText className="text-base text-gray-900" weight="semiBold">
+            {selectedTabConfig?.title}
+          </ThemedText>
+        )}
       </View>
     </View>
   );
