@@ -38,3 +38,16 @@ export const listTransactionsByCategory = async (
     categories: result.data.categories ?? [],
   };
 };
+
+export const listAccountTransactions = async (
+  token: string,
+  accountId: number,
+) => {
+  const query = `account_id=${encodeURIComponent(String(accountId))}`;
+  const result = await apiRequest<{ success: true; transactions: Transaction[] }>(
+    `/api/v0/transactions?${query}`,
+    { token },
+  );
+
+  return result.data.transactions ?? [];
+};

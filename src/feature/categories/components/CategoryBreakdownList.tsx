@@ -18,7 +18,7 @@ const CategoryBreakdownRow = ({
     accessibilityRole="button"
     accessibilityLabel={item.accessibilityLabel}
     onPress={() => onPress(item.id)}
-    className="mt-3 flex-row items-center rounded-2xl border border-gray-100 bg-white p-3"
+    className="mt-2 flex-row items-center rounded-2xl border border-gray-100 bg-white p-3"
     style={styles.categoryCard}
   >
     <CategoryProgressIcon
@@ -84,7 +84,7 @@ const CategoryBreakdownList = ({
   items,
   onSelectCategory,
 }: CategoryBreakdownListProps) => (
-  <View className="mt-1">
+  <View>
     {items.map((item) => (
       <CategoryBreakdownRow
         key={item.id}
