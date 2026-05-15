@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import type { SelectedAccountBalanceCardProps } from '@/feature/accounts/types/accountsOverview.types';
@@ -12,6 +13,13 @@ const SelectedAccountBalanceCard = ({
   onChangeAccountPress,
   selectedAccount,
 }: SelectedAccountBalanceCardProps) => {
+  const [isBalanceVisible, setIsBalanceVisible] = useState(true);
+  const balanceLabel = formatCents(
+    selectedAccount?.current_balance_cents ?? 0,
+    displayCurrency.id,
+    currencies,
+  );
+
   return (
     <View className="mt-8 rounded-3xl bg-secondary px-5 py-6">
       <View className="flex-row items-start justify-between">
@@ -34,27 +42,42 @@ const SelectedAccountBalanceCard = ({
             weight="bold"
             numberOfLines={1}
           >
-            {formatCents(
-              selectedAccount?.current_balance_cents ?? 0,
-              displayCurrency.id,
-              currencies,
-            )}
+            {isBalanceVisible ? balanceLabel : '******'}
           </ThemedText>
         </View>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Change account"
-          onPress={onChangeAccountPress}
-          className="h-12 w-12 items-center justify-center rounded-full bg-white/15"
-        >
-          <Ionicons
-            name="swap-horizontal-outline"
-            size={24}
-            color={themeColors.white}
-          />
-        </TouchableOpacity>
+        <View className="items-center">
+          <TouchableOpacity
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel="Change account"
+            onPress={onChangeAccountPress}
+            className="h-12 w-12 items-center justify-center rounded-full bg-white/15"
+          >
+            <Ionicons
+              name="swap-horizontal-outline"
+              size={24}
+              color={themeColors.white}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isBalanceVisible ? 'Hide account balance' : 'Show account balance'
+            }
+            accessibilityState={{ selected: !isBalanceVisible }}
+            onPress={() => setIsBalanceVisible((isVisible) => !isVisible)}
+            className="mt-3 h-10 w-10 items-center justify-center rounded-full bg-white/15"
+          >
+            <Ionicons
+              name={isBalanceVisible ? 'eye-outline' : 'eye-off-outline'}
+              size={21}
+              color={themeColors.white}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

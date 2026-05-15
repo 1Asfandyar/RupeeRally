@@ -1,7 +1,1 @@
-import MainPlaceholderScreen from '@/feature/main/screens/MainPlaceholderScreen';
-
-const TransactionsScreen = () => (
-  <MainPlaceholderScreen screenKey="transactions" />
-);
-
-export default TransactionsScreen;
+export { default } from '@/feature/transactions/screens/TransactionsScreen';

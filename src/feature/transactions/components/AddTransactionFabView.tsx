@@ -19,7 +19,7 @@ const AddTransactionFabView = ({
       style={{ bottom: bottomOffset }}
     >
       {isExpanded ? (
-        <View className="mb-3 w-56 self-end overflow-hidden rounded-3xl bg-white py-2 shadow-lg">
+        <View className="mb-3 w-56 self-end overflow-hidden rounded-3xl border border-primary/50 bg-white py-2 shadow-lg">
           <TouchableOpacity
             activeOpacity={0.9}
             accessibilityLabel="Add personal transaction"
@@ -30,12 +30,12 @@ const AddTransactionFabView = ({
             <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
               <Ionicons name="person-outline" size={18} color={themeColors.primary} />
             </View>
-            <ThemedText className="ml-3 text-sm text-gray-900" weight="semiBold">
+            <ThemedText className="ml-5 text-md text-gray-900" weight="semiBold">
               Add personal
             </ThemedText>
           </TouchableOpacity>
 
-          <View className="mx-4 h-px bg-gray-100" />
+          <View className="mx-4 h-px bg-primary/50" />
 
           <TouchableOpacity
             activeOpacity={0.9}
@@ -47,7 +47,7 @@ const AddTransactionFabView = ({
             <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
               <Ionicons name="people-outline" size={18} color={themeColors.primary} />
             </View>
-            <ThemedText className="ml-3 text-sm text-gray-900" weight="semiBold">
+            <ThemedText className="ml-5 text-md text-gray-900" weight="semiBold">
               Add shared
             </ThemedText>
           </TouchableOpacity>

@@ -44,8 +44,6 @@ const PersonalCategoryDashboard = ({
 
   return (
     <View className="bg-gray-100">
-      <CategoryDashboardSummary metrics={dashboard.metrics} />
-
       {dashboard.hasCategories ? (
         <CategoryBreakdownList
           items={dashboard.items}
