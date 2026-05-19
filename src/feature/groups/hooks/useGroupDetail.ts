@@ -1,5 +1,7 @@
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ROUTES } from '@/config/routes';
 import {
   addGroupMembers,
   getGroup,
@@ -33,8 +35,10 @@ const useGroupDetail = (
   groupId: number | null,
   onBack: () => void,
 ): GroupDetailViewModel => {
+  const router = useRouter();
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
+  const clearSession = useAuthStore((state) => state.clearSession);
   const [editError, setEditError] = useState('');
   const [editGroupName, setEditGroupName] = useState('');
   const [editSelectedFriendIds, setEditSelectedFriendIds] = useState<number[]>(
@@ -64,6 +68,11 @@ const useGroupDetail = (
     [editGroupName, editSelectedFriendIds.length, isSaving],
   );
 
+  const redirectToLogin = useCallback(async () => {
+    await clearSession();
+    router.replace(ROUTES.AUTH_LOGIN);
+  }, [clearSession, router]);
+
   const loadGroup = useCallback(async () => {
     if (!token || !groupId) {
       setIsLoading(false);
@@ -88,6 +97,11 @@ const useGroupDetail = (
       setGroup(nextGroup);
       setFriends(getGroupUsers(friendGroups[0], user?.id));
     } catch (nextError) {
+      if (nextError instanceof ApiError && nextError.status === 401) {
+        await redirectToLogin();
+        return;
+      }
+
       setError(
         nextError instanceof Error
           ? nextError.message
@@ -96,7 +110,7 @@ const useGroupDetail = (
     } finally {
       setIsLoading(false);
     }
-  }, [groupId, token, user?.id]);
+  }, [groupId, redirectToLogin, token, user?.id]);
 
   useEffect(() => {
     void loadGroup();
@@ -175,6 +189,11 @@ const useGroupDetail = (
       await loadGroup();
       setIsEditModalVisible(false);
     } catch (nextError) {
+      if (nextError instanceof ApiError && nextError.status === 401) {
+        await redirectToLogin();
+        return;
+      }
+
       setEditError(
         nextError instanceof ApiError
           ? nextError.fieldErrors.base || nextError.message
@@ -189,6 +208,7 @@ const useGroupDetail = (
     editableMembers,
     group?.id,
     loadGroup,
+    redirectToLogin,
     token,
   ]);
 

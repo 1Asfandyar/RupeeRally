@@ -31,6 +31,7 @@ import type {
   TransactionType,
 } from '@/feature/transactions/types/transaction.types';
 import {
+  areSplitValueMapsEqual,
   buildSharedExpenseUserShares,
   getDefaultSharedExpenseSplitValues,
   getSharedExpenseSplitParticipantIds,
@@ -102,27 +103,55 @@ const useAddTransactionRecord = (
   const params = useLocalSearchParams<{ accountId?: string }>();
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
-  const {
-    accountDropdownQuery,
-    accounts,
-    categories,
-    categoryPickerQuery,
-    closeCategoryPicker,
-    closeDropdown,
-    formError,
-    isCategoryPickerVisible,
-    isLoadingOptions,
-    openAccountDropdown,
-    openCategoryPicker,
-    openDropdown,
-    resetAddTransactionRecord,
-    setAccountDropdownQuery,
-    setAccounts,
-    setCategories,
-    setCategoryPickerQuery,
-    setFormError,
-    setIsLoadingOptions,
-  } = useAddTransactionRecordStore();
+  const accountDropdownQuery = useAddTransactionRecordStore(
+    (state) => state.accountDropdownQuery,
+  );
+  const accounts = useAddTransactionRecordStore((state) => state.accounts);
+  const categories = useAddTransactionRecordStore((state) => state.categories);
+  const categoryPickerQuery = useAddTransactionRecordStore(
+    (state) => state.categoryPickerQuery,
+  );
+  const closeCategoryPicker = useAddTransactionRecordStore(
+    (state) => state.closeCategoryPicker,
+  );
+  const closeDropdown = useAddTransactionRecordStore(
+    (state) => state.closeDropdown,
+  );
+  const formError = useAddTransactionRecordStore((state) => state.formError);
+  const isCategoryPickerVisible = useAddTransactionRecordStore(
+    (state) => state.isCategoryPickerVisible,
+  );
+  const isLoadingOptions = useAddTransactionRecordStore(
+    (state) => state.isLoadingOptions,
+  );
+  const openAccountDropdown = useAddTransactionRecordStore(
+    (state) => state.openAccountDropdown,
+  );
+  const openCategoryPicker = useAddTransactionRecordStore(
+    (state) => state.openCategoryPicker,
+  );
+  const openDropdown = useAddTransactionRecordStore(
+    (state) => state.openDropdown,
+  );
+  const resetAddTransactionRecord = useAddTransactionRecordStore(
+    (state) => state.resetAddTransactionRecord,
+  );
+  const setAccountDropdownQuery = useAddTransactionRecordStore(
+    (state) => state.setAccountDropdownQuery,
+  );
+  const setAccounts = useAddTransactionRecordStore((state) => state.setAccounts);
+  const setCategories = useAddTransactionRecordStore(
+    (state) => state.setCategories,
+  );
+  const setCategoryPickerQuery = useAddTransactionRecordStore(
+    (state) => state.setCategoryPickerQuery,
+  );
+  const setFormError = useAddTransactionRecordStore(
+    (state) => state.setFormError,
+  );
+  const setIsLoadingOptions = useAddTransactionRecordStore(
+    (state) => state.setIsLoadingOptions,
+  );
   const content = addTransactionRecordContent[recordKind];
   const isSharedRecord = recordKind === 'shared';
   const [friendPickerQuery, setFriendPickerQuery] = useState('');
@@ -469,7 +498,7 @@ const useAddTransactionRecord = (
       totalAmountCents,
     );
 
-    if (JSON.stringify(nextSplitValues) !== JSON.stringify(values.splitValues)) {
+    if (!areSplitValueMapsEqual(nextSplitValues, values.splitValues)) {
       setFormFieldValue('splitValues', nextSplitValues);
     }
   }, [

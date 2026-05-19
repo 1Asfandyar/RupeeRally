@@ -1,21 +1,26 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useCallback, useMemo } from 'react';
 import {
+  FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
-  ScrollView,
   TouchableOpacity,
   View,
 } from 'react-native';
+import type { ListRenderItem } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { addFriendModalStyles } from '@/feature/transactions/components/AddFriendModal.styles';
+import FriendSearchResultRow from '@/feature/transactions/components/FriendSearchResultRow';
 import type { AddFriendModalProps } from '@/feature/transactions/types/addTransactionRecord.types';
-import SharedExpenseAvatar from '@/feature/transactions/components/SharedExpenseAvatar';
-import { getUserLabel } from '@/feature/groups/utils/groupMembers.utils';
+import type { GroupUser } from '@/feature/groups/types/group.types';
 import ThemedButton from '@/theme/components/ThemedButton';
 import ThemedInput from '@/theme/components/ThemedInput';
 import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';
+
+const keyExtractor = (user: GroupUser) => String(user.id);
 
 const AddFriendModal = ({
   emailQuery,
@@ -30,6 +35,23 @@ const AddFriendModal = ({
   onSearch,
   results,
 }: AddFriendModalProps) => {
+  const existingFriendIdSet = useMemo(
+    () => new Set(existingFriendIds),
+    [existingFriendIds],
+  );
+  const renderResult = useCallback<ListRenderItem<GroupUser>>(
+    ({ item }) => (
+      <FriendSearchResultRow
+        isAdding={isAdding}
+        isAlreadyFriend={existingFriendIdSet.has(item.id)}
+        isSearching={isSearching}
+        onAddUser={onAddUser}
+        user={item}
+      />
+    ),
+    [existingFriendIdSet, isAdding, isSearching, onAddUser],
+  );
+
   return (
     <Modal
       animationType="slide"
@@ -97,51 +119,18 @@ const AddFriendModal = ({
               />
             </View>
 
-            <ScrollView
+            <FlatList
+              data={results}
+              initialNumToRender={8}
+              keyExtractor={keyExtractor}
               keyboardShouldPersistTaps="handled"
+              maxToRenderPerBatch={8}
+              renderItem={renderResult}
               showsVerticalScrollIndicator={results.length > 3}
-              className="max-h-72"
               contentContainerStyle={{ paddingBottom: 24, paddingHorizontal: 20 }}
-            >
-              {results.map((user) => {
-                const isAlreadyFriend = existingFriendIds.includes(user.id);
-
-                return (
-                  <View
-                    key={user.id}
-                    className="mb-3 flex-row items-center rounded-xl border border-gray-200 bg-white px-4 py-4"
-                  >
-                    <SharedExpenseAvatar user={user} size={40} />
-                    <View className="ml-3 min-w-0 flex-1">
-                      <ThemedText
-                        className="text-sm text-gray-900"
-                        weight="semiBold"
-                        numberOfLines={1}
-                      >
-                        {getUserLabel(user)}
-                      </ThemedText>
-                      {user.email ? (
-                        <ThemedText className="mt-0.5 text-xs text-gray-500" numberOfLines={1}>
-                          {user.email}
-                        </ThemedText>
-                      ) : null}
-                    </View>
-                    <ThemedButton
-                      title={isAlreadyFriend ? 'Added' : 'Add'}
-                      leftIcon={
-                        isAlreadyFriend ? 'checkmark-circle' : 'person-add-outline'
-                      }
-                      loading={isAdding && !isAlreadyFriend}
-                      disabled={isAlreadyFriend || isAdding || isSearching}
-                      onPress={() => onAddUser(user.id)}
-                      containerClassName="ml-3 px-3 py-2"
-                      textClassName="text-xs"
-                      iconSize={14}
-                    />
-                  </View>
-                );
-              })}
-            </ScrollView>
+              style={addFriendModalStyles.resultsList}
+              windowSize={5}
+            />
           </SafeAreaView>
         </KeyboardAvoidingView>
       </View>

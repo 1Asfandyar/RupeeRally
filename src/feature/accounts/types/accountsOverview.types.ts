@@ -38,6 +38,13 @@ export type AccountPickerModalProps = {
   onSelectAccount: (accountId: number) => void;
 };
 
+export type AccountOptionRowProps = {
+  account: Account;
+  currencies: Currency[];
+  isSelected: boolean;
+  onSelectAccount: (accountId: number) => void;
+};
+
 export type AccountsOverviewCategoryTotals = {
   totalExpenseCents: number;
   totalIncomeCents: number;

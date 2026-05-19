@@ -28,6 +28,10 @@ const SharedExpenseParticipants = ({
 }: SharedExpenseParticipantsProps) => {
   const canAddFriends = friendsGroupId !== null;
   const normalizedQuery = query.trim().toLowerCase();
+  const selectedUserIdSet = useMemo(
+    () => new Set(selectedUserIds),
+    [selectedUserIds],
+  );
   const groupSearchResults = useMemo(() => {
     if (normalizedQuery.length === 0) {
       return [];
@@ -67,8 +71,8 @@ const SharedExpenseParticipants = ({
         return label.includes(normalizedQuery) || email.includes(normalizedQuery);
       })
       .sort((first, second) => {
-        const firstSelected = selectedUserIds.includes(first.id);
-        const secondSelected = selectedUserIds.includes(second.id);
+        const firstSelected = selectedUserIdSet.has(first.id);
+        const secondSelected = selectedUserIdSet.has(second.id);
 
         if (firstSelected === secondSelected) {
           return getUserLabel(first).localeCompare(getUserLabel(second));
@@ -77,7 +81,7 @@ const SharedExpenseParticipants = ({
         return firstSelected ? -1 : 1;
       })
       .slice(0, 5);
-  }, [friends, normalizedQuery, selectedUserIds]);
+  }, [friends, normalizedQuery, selectedUserIdSet]);
   const shouldShowSearchResults = normalizedQuery.length > 0;
   const hasSearchResults =
     groupSearchResults.length > 0 || friendSearchResults.length > 0;
@@ -176,7 +180,7 @@ const SharedExpenseParticipants = ({
                 const isSelected =
                   groupUserIds.length > 0 &&
                   groupUserIds.every((userId) =>
-                    selectedUserIds.includes(userId),
+                    selectedUserIdSet.has(userId),
                   );
                 const memberCountLabel = `${members.length} ${
                   members.length === 1 ? 'member' : 'members'
@@ -228,7 +232,7 @@ const SharedExpenseParticipants = ({
               })}
 
               {friendSearchResults.map((friend) => {
-                const isSelected = selectedUserIds.includes(friend.id);
+                const isSelected = selectedUserIdSet.has(friend.id);
                 const supportingLabel =
                   friend.email ??
                   friend.mobile_number ??

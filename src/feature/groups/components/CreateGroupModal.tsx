@@ -1,23 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useCallback, useMemo } from 'react';
 import {
+  FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
-  ScrollView,
   TouchableOpacity,
   View,
 } from 'react-native';
+import type { ListRenderItem } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import GroupFriendOptionRow from '@/feature/groups/components/GroupFriendOptionRow';
 import type { CreateGroupModalProps } from '@/feature/groups/types/groupsScreen.types';
-import {
-  getUserInitial,
-  getUserLabel,
-} from '@/feature/groups/utils/groupMembers.utils';
+import type { GroupUser } from '@/feature/groups/types/group.types';
 import ThemedButton from '@/theme/components/ThemedButton';
 import ThemedInput from '@/theme/components/ThemedInput';
 import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';
+
+const keyExtractor = (friend: GroupUser) => String(friend.id);
 
 const CreateGroupModal = ({
   error,
@@ -32,6 +34,21 @@ const CreateGroupModal = ({
   onToggleFriend,
   selectedFriendIds,
 }: CreateGroupModalProps) => {
+  const selectedFriendIdSet = useMemo(
+    () => new Set(selectedFriendIds),
+    [selectedFriendIds],
+  );
+  const renderFriend = useCallback<ListRenderItem<GroupUser>>(
+    ({ item }) => (
+      <GroupFriendOptionRow
+        friend={item}
+        isSelected={selectedFriendIdSet.has(item.id)}
+        onToggleFriend={onToggleFriend}
+      />
+    ),
+    [onToggleFriend, selectedFriendIdSet],
+  );
+
   return (
     <Modal
       animationType="slide"
@@ -88,65 +105,12 @@ const CreateGroupModal = ({
               />
             </View>
 
-            <ScrollView
+            <FlatList
+              data={friends}
+              initialNumToRender={10}
+              keyExtractor={keyExtractor}
               keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={friends.length > 5}
-              contentContainerStyle={{ paddingBottom: 16, paddingHorizontal: 20 }}
-            >
-              {friends.map((friend) => {
-                const isSelected = selectedFriendIds.includes(friend.id);
-
-                return (
-                  <TouchableOpacity
-                    key={friend.id}
-                    activeOpacity={0.78}
-                    accessibilityRole="checkbox"
-                    accessibilityState={{ checked: isSelected }}
-                    onPress={() => onToggleFriend(friend.id)}
-                    className={`mb-2 flex-row items-center rounded-xl border px-4 py-4 ${
-                      isSelected
-                        ? 'border-primary bg-primary/10'
-                        : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <View
-                      className={`h-10 w-10 items-center justify-center rounded-full ${
-                        isSelected ? 'bg-primary' : 'bg-gray-100'
-                      }`}
-                    >
-                      <ThemedText
-                        className={`text-sm ${
-                          isSelected ? 'text-white' : 'text-gray-700'
-                        }`}
-                        weight="semiBold"
-                      >
-                        {getUserInitial(friend)}
-                      </ThemedText>
-                    </View>
-                    <View className="ml-3 min-w-0 flex-1">
-                      <ThemedText
-                        className="text-sm text-gray-900"
-                        weight="semiBold"
-                        numberOfLines={1}
-                      >
-                        {getUserLabel(friend)}
-                      </ThemedText>
-                      {friend.email ? (
-                        <ThemedText className="mt-0.5 text-xs text-gray-500" numberOfLines={1}>
-                          {friend.email}
-                        </ThemedText>
-                      ) : null}
-                    </View>
-                    <Ionicons
-                      name={isSelected ? 'checkmark-circle' : 'ellipse-outline'}
-                      size={22}
-                      color={isSelected ? themeColors.primary : themeColors.gray400}
-                    />
-                  </TouchableOpacity>
-                );
-              })}
-
-              {friends.length === 0 ? (
+              ListEmptyComponent={
                 <View className="items-center rounded-xl border border-dashed border-gray-300 bg-gray-50 px-5 py-8">
                   <Ionicons
                     name="person-add-outline"
@@ -157,8 +121,13 @@ const CreateGroupModal = ({
                     Add friends first, then create a custom group with them.
                   </ThemedText>
                 </View>
-              ) : null}
-            </ScrollView>
+              }
+              maxToRenderPerBatch={10}
+              renderItem={renderFriend}
+              showsVerticalScrollIndicator={friends.length > 5}
+              contentContainerStyle={{ paddingBottom: 16, paddingHorizontal: 20 }}
+              windowSize={6}
+            />
 
             <View className="border-t border-gray-100 px-5 pb-3 pt-4">
               <ThemedButton

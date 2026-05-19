@@ -28,6 +28,17 @@ export type GroupCardProps = {
   onPress?: () => void;
 };
 
+export type GroupFriendOptionRowProps = {
+  friend: GroupUser;
+  isSelected: boolean;
+  onToggleFriend: (userId: number) => void;
+};
+
+export type GroupListItemProps = {
+  group: Group;
+  onOpenGroup: (groupId: number) => void;
+};
+
 export type CreateGroupModalProps = {
   error: string;
   friends: GroupUser[];

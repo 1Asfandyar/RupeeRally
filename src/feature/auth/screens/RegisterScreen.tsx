@@ -5,7 +5,8 @@ import ThemedPhoneInput from '@/theme/components/ThemedPhoneInput'
 import ThemedText from '@/theme/components/ThemedText'
 import { CountryOption } from '@/types/country.types'
 import useRegisterScreen from '@/feature/auth/hooks/useRegisterScreen'
-import { Image, View } from 'react-native'
+import { Image } from 'expo-image'
+import { View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const RegisterScreen = () => {
@@ -30,7 +31,7 @@ const RegisterScreen = () => {
       {!isKeyboardVisible && <Image
         source={require('../../../assets/logo/myownmoney_logo.png')}
         style={{ width: '40%', height: '40%' }}
-        resizeMode="contain"
+        contentFit="contain"
       />}
       <View className='w-full'>
         <ThemedInput

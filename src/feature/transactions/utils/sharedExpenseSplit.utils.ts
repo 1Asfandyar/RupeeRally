@@ -38,6 +38,37 @@ export const sanitizeSharedExpenseSplitInput = (
   return normalized;
 };
 
+export const getSharedExpenseSplitInputSuffix = (
+  method: SharedExpenseSplitMethod,
+) => {
+  if (method === 'percentage') {
+    return '%';
+  }
+
+  if (method === 'shares') {
+    return 'shares';
+  }
+
+  return '';
+};
+
+export const areSplitValueMapsEqual = (
+  firstValues: SharedExpenseSplitValueMap,
+  secondValues: SharedExpenseSplitValueMap,
+) => {
+  const firstKeys = Object.keys(firstValues);
+  const secondKeys = Object.keys(secondValues);
+
+  return (
+    firstKeys.length === secondKeys.length &&
+    firstKeys.every(
+      (key) =>
+        Object.prototype.hasOwnProperty.call(secondValues, key) &&
+        firstValues[key] === secondValues[key],
+    )
+  );
+};
+
 export const getSharedExpenseSplitParticipantIds = (
   paidByUserId: number,
   selectedFriendIds: number[],
