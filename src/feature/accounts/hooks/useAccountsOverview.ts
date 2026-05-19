@@ -7,7 +7,10 @@ import { useAccountsOverviewStore } from '@/feature/accounts/store/accountsOverv
 import type { AccountsOverviewViewModel } from '@/feature/accounts/types/accountsOverview.types';
 import type { TransactionCategoryBreakdown } from '@/feature/categories/types/categoryDashboard.types';
 import { listCurrencies } from '@/feature/currencies/api/currencies.api';
-import { listTransactionsByCategory } from '@/feature/transactions/api/transactions.api';
+import {
+  listSharedExpenseTransactions,
+  listTransactionsByCategory,
+} from '@/feature/transactions/api/transactions.api';
 import { ApiError } from '@/services/api';
 import { useAuthStore } from '@/store/auth.store';
 import { fallbackCurrencies, getCurrencyById } from '@/utils/currency';
@@ -46,21 +49,27 @@ export const useAccountsOverview = (): AccountsOverviewViewModel => {
     error,
     isAccountPickerVisible,
     isCategoryDashboardLoading,
+    isSharedExpensesDashboardLoading,
     isLoading,
     openAccountPicker: openStoredAccountPicker,
     selectedAccountId,
     selectedCategoryId,
     selectedExpenseTab,
+    sharedExpensesDashboard,
+    sharedExpensesDashboardError,
     setAccounts,
     setCategoryDashboard,
     setCategoryDashboardError,
     setCurrencies,
     setError,
     setIsCategoryDashboardLoading,
+    setIsSharedExpensesDashboardLoading,
     setIsLoading,
     setSelectedAccountId,
     setSelectedCategoryId,
     setSelectedExpenseTab,
+    setSharedExpensesDashboard,
+    setSharedExpensesDashboardError,
   } = useAccountsOverviewStore();
 
   const activeAccounts = useMemo(
@@ -88,6 +97,10 @@ export const useAccountsOverview = (): AccountsOverviewViewModel => {
   const categoryTotals = useMemo(
     () => getDashboardTotals(categoryBreakdowns),
     [categoryBreakdowns],
+  );
+  const sharedExpenseFriends = useMemo(
+    () => sharedExpensesDashboard?.friends ?? [],
+    [sharedExpensesDashboard],
   );
   const selectedCategoryBreakdown = useMemo(
     () =>
@@ -190,10 +203,62 @@ export const useAccountsOverview = (): AccountsOverviewViewModel => {
     token,
   ]);
 
+  const refreshSharedExpensesDashboard = useCallback(async () => {
+    if (!token || !selectedAccount?.id || selectedExpenseTab !== 'shared') {
+      setSharedExpensesDashboard(null);
+      setSharedExpensesDashboardError(null);
+      setIsSharedExpensesDashboardLoading(false);
+      return;
+    }
+
+    setIsSharedExpensesDashboardLoading(true);
+    setSharedExpensesDashboardError(null);
+
+    try {
+      const nextDashboard = await listSharedExpenseTransactions(
+        token,
+        selectedAccount.id,
+      );
+
+      setSharedExpensesDashboard(nextDashboard);
+    } catch (requestError) {
+      if (requestError instanceof ApiError && requestError.status === 401) {
+        await redirectToLogin();
+        return;
+      }
+
+      setSharedExpensesDashboardError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Could not load shared expenses.',
+      );
+    } finally {
+      setIsSharedExpensesDashboardLoading(false);
+    }
+  }, [
+    redirectToLogin,
+    selectedAccount?.id,
+    selectedExpenseTab,
+    setIsSharedExpensesDashboardLoading,
+    setSharedExpensesDashboard,
+    setSharedExpensesDashboardError,
+    token,
+  ]);
+
   const refreshOverview = useCallback(() => {
     void refreshAccounts();
+    if (selectedExpenseTab === 'shared') {
+      void refreshSharedExpensesDashboard();
+      return;
+    }
+
     void refreshCategoryDashboard();
-  }, [refreshAccounts, refreshCategoryDashboard]);
+  }, [
+    refreshAccounts,
+    refreshCategoryDashboard,
+    refreshSharedExpensesDashboard,
+    selectedExpenseTab,
+  ]);
 
   useEffect(() => {
     void refreshAccounts();
@@ -202,6 +267,10 @@ export const useAccountsOverview = (): AccountsOverviewViewModel => {
   useEffect(() => {
     void refreshCategoryDashboard();
   }, [refreshCategoryDashboard]);
+
+  useEffect(() => {
+    void refreshSharedExpensesDashboard();
+  }, [refreshSharedExpensesDashboard]);
 
   useEffect(() => {
     if (activeAccounts.length === 0) {
@@ -260,17 +329,22 @@ export const useAccountsOverview = (): AccountsOverviewViewModel => {
     error,
     isCategoryDashboardLoading,
     isAccountPickerVisible,
+    isSharedExpensesDashboardLoading,
     isLoading,
     openAccountPicker,
     refreshAccounts,
     refreshCategoryDashboard,
     refreshOverview,
+    refreshSharedExpensesDashboard,
     selectedAccount,
     selectedCategoryBreakdown,
     selectedExpenseTab,
     selectAccount,
     selectDashboardCategory,
     setSelectedExpenseTab,
+    sharedExpenseFriends,
+    sharedExpensesDashboard,
+    sharedExpensesDashboardError,
     userFirstName,
   };
 };

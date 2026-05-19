@@ -24,6 +24,10 @@ import type {
   TransactionsViewModel,
 } from '@/feature/transactions/types/transaction.types';
 import type { TransactionDateFilters } from '@/feature/transactions/types/transactionDateFilter.types';
+import {
+  getSignedTransactionAmountCents,
+  getTransactionAmountCents,
+} from '@/feature/transactions/utils/transactionAmount.utils';
 import { ApiError } from '@/services/api';
 import { useAuthStore } from '@/store/auth.store';
 import type { Currency } from '@/types/currency.types';
@@ -57,11 +61,6 @@ const formatTransactionDate = (value: string) => {
     year: 'numeric',
   });
 };
-
-const getTransactionAmount = (transaction: Transaction) =>
-  transaction.transaction_type === 'expense'
-    ? -Math.abs(transaction.amount_cents)
-    : Math.abs(transaction.amount_cents);
 
 const formatSignedCents = (
   cents: number,
@@ -97,7 +96,7 @@ const getTransactionListItem = (
 
   return {
     amountLabel: formatSignedCents(
-      getTransactionAmount(transaction),
+      getSignedTransactionAmountCents(transaction),
       transaction.currency_id ?? displayCurrency.id,
       currencies,
     ),
@@ -139,7 +138,7 @@ const getSummaryMetrics = (
 ) => {
   const totals = transactions.reduce(
     (nextTotals, transaction) => {
-      const amount = Math.abs(transaction.amount_cents);
+      const amount = Math.abs(getTransactionAmountCents(transaction));
 
       if (transaction.transaction_type === 'income') {
         return {
