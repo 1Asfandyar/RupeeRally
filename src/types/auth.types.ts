@@ -1,10 +1,14 @@
 import type { CreateAccountPayload } from '@/types/account.types';
 
 export type AuthUser = {
+  avatar_url?: string | null;
   id: number;
   full_name: string;
   mobile_number: string;
   email: string;
+  photo_url?: string | null;
+  profile_image_url?: string | null;
+  profile_photo_url?: string | null;
   role: string;
   onboarding_completed?: boolean;
   has_completed_onboarding?: boolean;
