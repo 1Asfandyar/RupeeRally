@@ -3,7 +3,8 @@ import ThemedDivider from '@/theme/components/ThemedDivider'
 import ThemedInput from '@/theme/components/ThemedInput'
 import ThemedText from '@/theme/components/ThemedText'
 import useLoginScreen from '@/feature/auth/hooks/useLoginScreen'
-import { Image, View } from 'react-native'
+import { Image } from 'expo-image'
+import { View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const LoginScreen = () => {
@@ -27,7 +28,7 @@ const LoginScreen = () => {
       {!isKeyboardVisible && <Image
         source={require('../../../assets/logo/myownmoney_logo.png')}
         style={{ width: '100%', height: '40%' }}
-        resizeMode="contain"
+        contentFit="contain"
       />}
       <View className='w-full'>
         <ThemedInput

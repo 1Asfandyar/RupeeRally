@@ -69,6 +69,12 @@ export type AddTransactionRecordDropdownOption = {
   supportingLabel?: string;
 };
 
+export type SearchableDropdownOptionRowProps = {
+  isSelected: boolean;
+  onSelect: (id: number) => void;
+  option: AddTransactionRecordDropdownOption;
+};
+
 export type SearchableDropdownProps = {
   error?: string;
   iconName: keyof typeof Ionicons.glyphMap;
@@ -85,6 +91,12 @@ export type SearchableDropdownProps = {
   placeholder: string;
   query: string;
   selectedId: number | null;
+};
+
+export type CategoryOptionRowProps = {
+  isSelected: boolean;
+  onSelect: (id: number) => void;
+  option: AddTransactionRecordDropdownOption;
 };
 
 export type CategoryPickerModalProps = {
@@ -137,6 +149,18 @@ export type SharedExpenseSplitSheetProps = {
   values: SharedExpenseSplitValueMap;
 };
 
+export type SplitParticipantRowProps = {
+  currencyId?: number | null;
+  index: number;
+  method: SharedExpenseSplitMethod;
+  onChangeValue: (userId: number, value: string) => void;
+  participant: GroupUser;
+  participantCount: number;
+  totalAmountCents: number;
+  totalShares: number;
+  value: string;
+};
+
 export type SharedTransactionRecordFormProps = {
   form: AddTransactionRecordViewModel;
 };
@@ -153,6 +177,14 @@ export type AddFriendModalProps = {
   onClose: () => void;
   onSearch: () => void;
   results: GroupUser[];
+};
+
+export type FriendSearchResultRowProps = {
+  isAdding: boolean;
+  isAlreadyFriend: boolean;
+  isSearching: boolean;
+  onAddUser: (id: number) => void;
+  user: GroupUser;
 };
 
 export type AddTransactionRecordFormData = {

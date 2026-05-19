@@ -38,6 +38,14 @@ export type SharedExpenseDashboardFriendItem = {
   transactions: SharedExpenseDashboardTransactionItem[];
 };
 
+export type SharedTransactionRowProps = {
+  transaction: SharedExpenseDashboardTransactionItem;
+};
+
+export type SharedExpenseFriendCardProps = {
+  item: SharedExpenseDashboardFriendItem;
+};
+
 export type SharedExpenseDashboardSummary = {
   amountLabel: string;
   friendCountLabel: string;

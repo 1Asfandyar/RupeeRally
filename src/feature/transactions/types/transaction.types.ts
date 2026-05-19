@@ -1,4 +1,6 @@
 import type { Ionicons } from '@expo/vector-icons';
+import type { ReactElement } from 'react';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 import type { Category } from '@/feature/categories/types/category.types';
 import type {
@@ -141,6 +143,11 @@ export type TransactionsSummaryMetricProps = {
 };
 
 export type TransactionListProps = {
+  contentContainerStyle?: StyleProp<ViewStyle>;
+  isRefreshing?: boolean;
+  ListEmptyComponent?: ReactElement | null;
+  ListHeaderComponent?: ReactElement | null;
+  onRefresh?: () => void;
   transactions: TransactionListItem[];
 };
 

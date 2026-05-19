@@ -175,26 +175,32 @@ export const useTransactions = (): TransactionsViewModel => {
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
   const clearSession = useAuthStore((state) => state.clearSession);
-  const {
-    accounts,
-    currencies,
-    selectedAccountId,
-    setAccounts,
-    setCurrencies,
-    setSelectedAccountId,
-  } = useAccountsOverviewStore();
-  const {
-    categories,
-    error,
-    isAccountContextLoading,
-    isLoading,
-    setCategories,
-    setError,
-    setIsAccountContextLoading,
-    setIsLoading,
-    setTransactions,
-    transactions,
-  } = useTransactionsStore();
+  const accounts = useAccountsOverviewStore((state) => state.accounts);
+  const currencies = useAccountsOverviewStore((state) => state.currencies);
+  const selectedAccountId = useAccountsOverviewStore(
+    (state) => state.selectedAccountId,
+  );
+  const setAccounts = useAccountsOverviewStore((state) => state.setAccounts);
+  const setCurrencies = useAccountsOverviewStore((state) => state.setCurrencies);
+  const setSelectedAccountId = useAccountsOverviewStore(
+    (state) => state.setSelectedAccountId,
+  );
+  const categories = useTransactionsStore((state) => state.categories);
+  const error = useTransactionsStore((state) => state.error);
+  const isAccountContextLoading = useTransactionsStore(
+    (state) => state.isAccountContextLoading,
+  );
+  const isLoading = useTransactionsStore((state) => state.isLoading);
+  const setCategories = useTransactionsStore((state) => state.setCategories);
+  const setError = useTransactionsStore((state) => state.setError);
+  const setIsAccountContextLoading = useTransactionsStore(
+    (state) => state.setIsAccountContextLoading,
+  );
+  const setIsLoading = useTransactionsStore((state) => state.setIsLoading);
+  const setTransactions = useTransactionsStore(
+    (state) => state.setTransactions,
+  );
+  const transactions = useTransactionsStore((state) => state.transactions);
 
   const activeAccounts = useMemo(
     () => accounts.filter((account) => !account.is_archived),
@@ -351,13 +357,14 @@ export const useTransactions = (): TransactionsViewModel => {
     setError(null);
 
     try {
+      const shouldLoadCategories = categories.length === 0;
       const [nextTransactions, nextCategories] = await Promise.all([
         listAccountTransactions(token, selectedAccount.id, {
           fromDate: dateFilters.fromDate,
           search: debouncedSearchQuery,
           toDate: dateFilters.toDate,
         }),
-        listCategories(token),
+        shouldLoadCategories ? listCategories(token) : Promise.resolve(null),
       ]);
 
       if (transactionRequestIdRef.current !== requestId) {
@@ -365,7 +372,9 @@ export const useTransactions = (): TransactionsViewModel => {
       }
 
       setTransactions(nextTransactions);
-      setCategories(nextCategories);
+      if (nextCategories) {
+        setCategories(nextCategories);
+      }
       setHasLoadedTransactions(true);
     } catch (requestError) {
       if (transactionRequestIdRef.current !== requestId) {
@@ -388,6 +397,7 @@ export const useTransactions = (): TransactionsViewModel => {
       }
     }
   }, [
+    categories.length,
     dateFilters.fromDate,
     dateFilters.toDate,
     debouncedSearchQuery,

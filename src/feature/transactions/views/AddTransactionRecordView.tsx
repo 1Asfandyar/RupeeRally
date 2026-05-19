@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useMemo } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -20,6 +21,10 @@ import ThemedText from '@/theme/components/ThemedText';
 import { themeColors } from '@/theme/utilities';
 
 const AddTransactionRecordView = ({ form }: AddTransactionRecordViewProps) => {
+  const existingFriendIds = useMemo(
+    () => form.friends.map((friend) => friend.id),
+    [form.friends],
+  );
   const headerTitle = form.isSharedRecord
     ? 'Add an expense'
     : form.values.transactionType === 'income'
@@ -133,7 +138,7 @@ const AddTransactionRecordView = ({ form }: AddTransactionRecordViewProps) => {
           <AddFriendModal
             emailQuery={form.friendEmailQuery}
             error={form.friendSearchError}
-            existingFriendIds={form.friends.map((friend) => friend.id)}
+            existingFriendIds={existingFriendIds}
             isAdding={form.isAddingFriend}
             isSearching={form.isSearchingFriend}
             isVisible={form.isAddFriendModalVisible}

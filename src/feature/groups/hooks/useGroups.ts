@@ -1,5 +1,7 @@
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ROUTES } from '@/config/routes';
 import { createGroup, listGroups } from '@/feature/groups/api/groups.api';
 import type { Group, GroupUser } from '@/feature/groups/types/group.types';
 import type { GroupsViewModel } from '@/feature/groups/types/groupsScreen.types';
@@ -8,8 +10,10 @@ import { ApiError } from '@/services/api';
 import { useAuthStore } from '@/store/auth.store';
 
 const useGroups = (): GroupsViewModel => {
+  const router = useRouter();
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
+  const clearSession = useAuthStore((state) => state.clearSession);
   const [customGroups, setCustomGroups] = useState<Group[]>([]);
   const [friends, setFriends] = useState<GroupUser[]>([]);
   const [createError, setCreateError] = useState('');
@@ -27,6 +31,11 @@ const useGroups = (): GroupsViewModel => {
       selectedFriendIds.length === 0,
     [createGroupName, isCreating, selectedFriendIds.length],
   );
+
+  const redirectToLogin = useCallback(async () => {
+    await clearSession();
+    router.replace(ROUTES.AUTH_LOGIN);
+  }, [clearSession, router]);
 
   const loadGroups = useCallback(async () => {
     if (!token) {
@@ -46,6 +55,11 @@ const useGroups = (): GroupsViewModel => {
       setCustomGroups(nextCustomGroups);
       setFriends(getGroupUsers(nextFriendGroups[0], user?.id));
     } catch (nextError) {
+      if (nextError instanceof ApiError && nextError.status === 401) {
+        await redirectToLogin();
+        return;
+      }
+
       setError(
         nextError instanceof Error
           ? nextError.message
@@ -54,7 +68,7 @@ const useGroups = (): GroupsViewModel => {
     } finally {
       setIsLoading(false);
     }
-  }, [token, user?.id]);
+  }, [redirectToLogin, token, user?.id]);
 
   useEffect(() => {
     void loadGroups();
@@ -112,6 +126,11 @@ const useGroups = (): GroupsViewModel => {
       await loadGroups();
       closeCreateModal();
     } catch (nextError) {
+      if (nextError instanceof ApiError && nextError.status === 401) {
+        await redirectToLogin();
+        return;
+      }
+
       setCreateError(
         nextError instanceof ApiError
           ? nextError.fieldErrors.base || nextError.message
@@ -124,6 +143,7 @@ const useGroups = (): GroupsViewModel => {
     closeCreateModal,
     createGroupName,
     loadGroups,
+    redirectToLogin,
     selectedFriendIds,
     token,
   ]);

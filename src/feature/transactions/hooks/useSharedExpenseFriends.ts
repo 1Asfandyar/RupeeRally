@@ -23,25 +23,53 @@ const useSharedExpenseFriends = ({
   selectedUserIds,
   token,
 }: UseSharedExpenseFriendsParams) => {
-  const {
-    closeAddFriendModal,
-    friendEmailQuery,
-    friendSearchError,
-    friendSearchResults,
-    friends,
-    friendsGroup,
-    isAddFriendModalVisible,
-    isAddingFriend,
-    isSearchingFriend,
-    openAddFriendModal,
-    setFriendEmailQuery,
-    setFriendSearchError,
-    setFriendSearchResults,
-    setFriends,
-    setFriendsGroup,
-    setIsAddingFriend,
-    setIsSearchingFriend,
-  } = useAddTransactionRecordStore();
+  const closeAddFriendModal = useAddTransactionRecordStore(
+    (state) => state.closeAddFriendModal,
+  );
+  const friendEmailQuery = useAddTransactionRecordStore(
+    (state) => state.friendEmailQuery,
+  );
+  const friendSearchError = useAddTransactionRecordStore(
+    (state) => state.friendSearchError,
+  );
+  const friendSearchResults = useAddTransactionRecordStore(
+    (state) => state.friendSearchResults,
+  );
+  const friends = useAddTransactionRecordStore((state) => state.friends);
+  const friendsGroup = useAddTransactionRecordStore(
+    (state) => state.friendsGroup,
+  );
+  const isAddFriendModalVisible = useAddTransactionRecordStore(
+    (state) => state.isAddFriendModalVisible,
+  );
+  const isAddingFriend = useAddTransactionRecordStore(
+    (state) => state.isAddingFriend,
+  );
+  const isSearchingFriend = useAddTransactionRecordStore(
+    (state) => state.isSearchingFriend,
+  );
+  const openAddFriendModal = useAddTransactionRecordStore(
+    (state) => state.openAddFriendModal,
+  );
+  const setFriendEmailQuery = useAddTransactionRecordStore(
+    (state) => state.setFriendEmailQuery,
+  );
+  const setFriendSearchError = useAddTransactionRecordStore(
+    (state) => state.setFriendSearchError,
+  );
+  const setFriendSearchResults = useAddTransactionRecordStore(
+    (state) => state.setFriendSearchResults,
+  );
+  const setFriends = useAddTransactionRecordStore((state) => state.setFriends);
+  const setFriendsGroup = useAddTransactionRecordStore(
+    (state) => state.setFriendsGroup,
+  );
+  const setIsAddingFriend = useAddTransactionRecordStore(
+    (state) => state.setIsAddingFriend,
+  );
+  const setIsSearchingFriend = useAddTransactionRecordStore(
+    (state) => state.setIsSearchingFriend,
+  );
 
   const applyFriendsGroup = useCallback(
     (groups: Group[]) => {

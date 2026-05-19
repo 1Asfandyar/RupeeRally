@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image, View } from 'react-native';
+import { Image } from 'expo-image';
+import { View } from 'react-native';
 
+import { sharedExpenseAvatarStyles } from '@/feature/transactions/components/SharedExpenseAvatar.styles';
 import type { SharedExpenseAvatarProps } from '@/feature/transactions/types/addTransactionRecord.types';
 import {
   getUserAvatarUrl,
@@ -18,11 +20,16 @@ const SharedExpenseAvatar = ({
 
   if (avatarUrl) {
     return (
-      <Image
-        source={{ uri: avatarUrl }}
-        className={`rounded-full bg-gray-100 ${className}`}
+      <View
+        className={`overflow-hidden rounded-full bg-gray-100 ${className}`}
         style={{ height: size, width: size }}
-      />
+      >
+        <Image
+          source={{ uri: avatarUrl }}
+          contentFit="cover"
+          style={sharedExpenseAvatarStyles.image}
+        />
+      </View>
     );
   }
 
